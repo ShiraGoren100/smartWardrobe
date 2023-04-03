@@ -6,21 +6,16 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    fun getInstance(): Retrofit {
-        var mHttpLoggingInterceptor = HttpLoggingInterceptor()
-            .setLevel(HttpLoggingInterceptor.Level.BODY)
+    private const val BASE_URL = "http://localhost:5000"
 
-        var mOkHttpClient = OkHttpClient
-            .Builder()
-            .addInterceptor(mHttpLoggingInterceptor)
-            .build()
-
-
-        var retrofit: Retrofit = retrofit2.Retrofit.Builder()
-            .baseUrl("https://reqres.in")
+    private val retrofit: Retrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
-            .client(mOkHttpClient)
             .build()
-        return retrofit
+    }
+
+    val myApi: APIService by lazy {
+        retrofit.create(APIService::class.java)
     }
 }

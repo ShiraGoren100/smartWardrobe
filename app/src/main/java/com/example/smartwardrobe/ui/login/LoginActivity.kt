@@ -58,6 +58,7 @@ class LoginActivity : AppCompatActivity() {
             }
             if (loginResult.success != null) {
                 updateUiWithUser(loginResult.success)
+                
             }
             setResult(Activity.RESULT_OK)
 
