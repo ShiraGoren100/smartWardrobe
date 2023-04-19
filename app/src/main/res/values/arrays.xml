@@ -1,0 +1,74 @@
+<resources>
+    <!-- Reply Preference -->
+    <string-array name="reply_entries">
+        <item>Reply</item>
+        <item>Reply to all</item>
+    </string-array>
+
+    <string-array name="reply_values">
+        <item>reply</item>
+        <item>reply_all</item>
+    </string-array>
+
+    <string-array name="categories">
+        <item>Coats</item>
+        <item>Sweaters</item>
+        <item>Dresses</item>
+        <!--<item>Shirts</item>
+        <item>Pants</item>
+        <item>Skirts</item>
+        <item>Footwear</item>-->
+    </string-array>
+
+    <string-array name="colors">
+        <item>red</item>
+        <item>blue</item>
+        <item>green</item>
+        <item>yellow</item>
+        <item>purple</item>
+        <item>pink</item>
+        <item>orange</item>
+        <item>brown</item>
+        <item>black</item>
+        <item>white</item>
+        <item>gray</item>
+        <item>gold</item>
+        <item>silver</item>
+        <item>navy blue</item>
+        <item>sky blue</item>
+        <item>lime green</item>
+        <item>teal</item>
+        <item>indigo</item>
+        <item>magenta</item>
+        <item>violet</item>
+        <item>khaki</item>
+        <item>salmon</item>
+        <item>crimson</item>
+        <item>lavender</item>
+        <item>plum</item>
+        <item>blue violet</item>
+        <item>olive</item>
+        <item>cyan</item>
+        <item>maroon</item>
+        <item>beige</item>
+    </string-array>
+
+    <string-array name="features_Coats">
+        <item>Feature 1</item>
+        <item>Feature 2</item>
+        <item>Feature 3</item>
+    </string-array>
+
+    <string-array name="features_Sweaters">
+        <item>Feature 4</item>
+        <item>Feature 5</item>
+        <item>Feature 6</item>
+    </string-array>
+
+    <string-array name="features_Dresses">
+        <item>Feature 7</item>
+        <item>Feature 8</item>
+        <item>Feature 9</item>
+    </string-array>
+
+</resources>
