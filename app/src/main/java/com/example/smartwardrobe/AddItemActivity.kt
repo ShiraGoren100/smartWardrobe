@@ -1,15 +1,14 @@
 package com.example.smartwardrobe
+import com.google.android.material.R.style.Widget_MaterialComponents_TextInputLayout_OutlinedBox_ExposedDropdownMenu
 
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.view.ViewGroup
+import android.view.LayoutInflater
 import android.widget.*
 import androidx.navigation.ui.AppBarConfiguration
 import com.example.smartwardrobe.databinding.ActivityAddItemBinding
-import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputLayout
 
 class AddItemActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -38,14 +37,14 @@ class AddItemActivity : AppCompatActivity() {
         val featureMap = mutableMapOf<String, List<String>>()
 
         categories.forEach { category ->
-            val featuresResId = resources.getIdentifier("features_$category", "array", packageName)
-            val features = resources.getStringArray(featuresResId).toList()
-            featureMap[category] = features
+            val categoryResId = resources.getIdentifier("category_$category", "array", packageName)
+            val categor = resources.getStringArray(categoryResId).toList()
+            featureMap[category] = categor
         }
 
         binding.tvCategory.setOnItemClickListener { parent, view, position, id ->
             val category = parent.getItemAtPosition(position).toString()
-            val arrayName = "features_$category"
+            val arrayName = "category_$category"
             Log.d("DEBUG", "Category: $category, Array name: $arrayName")
             val features = resources.getStringArray(
                 resources.getIdentifier(arrayName, "array", packageName)
@@ -53,7 +52,7 @@ class AddItemActivity : AppCompatActivity() {
             updateFeatures(features)
         }
 
-
+/*
         binding.tvCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val selectedCategory = parent?.getItemAtPosition(position).toString()
@@ -75,15 +74,31 @@ class AddItemActivity : AppCompatActivity() {
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
+*/
     }
 
     private fun updateFeatures(features: Array<String>) {
         binding.featureContainer.removeAllViews()
-        features.forEach { feature ->
-            val checkBox = CheckBox(this@AddItemActivity)
-            checkBox.text = feature
-            binding.featureContainer.addView(checkBox)
+        features?.forEach { feature ->
+            val featureInputLayout = LayoutInflater.from(this@AddItemActivity)
+                .inflate(R.layout.item_spinner, null) as TextInputLayout
+
+            featureInputLayout.hint = feature
+            val properties = resources.getStringArray(resources.getIdentifier("feature_$feature", "array", packageName))
+
+            val featureAutoCompleteTextView = featureInputLayout.findViewById<AutoCompleteTextView>(R.id.tv_feature)
+            val adapter = ArrayAdapter(
+                this@AddItemActivity,
+                android.R.layout.simple_spinner_dropdown_item,
+                properties
+            )
+            featureAutoCompleteTextView.setAdapter(adapter)
+            featureAutoCompleteTextView.dropDownAnchor = featureInputLayout.id
+
+            binding.featureContainer.addView(featureInputLayout)
         }
     }
+
+
 
 }
