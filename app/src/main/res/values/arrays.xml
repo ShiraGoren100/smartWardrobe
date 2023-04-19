@@ -10,16 +10,6 @@
         <item>reply_all</item>
     </string-array>
 
-    <string-array name="categories">
-        <item>Coats</item>
-        <item>Sweaters</item>
-        <item>Dresses</item>
-        <!--<item>Shirts</item>
-        <item>Pants</item>
-        <item>Skirts</item>
-        <item>Footwear</item>-->
-    </string-array>
-
     <string-array name="colors">
         <item>red</item>
         <item>blue</item>
@@ -53,26 +43,88 @@
         <item>beige</item>
     </string-array>
 
+
+    <string-array name="categories">
+        <item>Coats</item>
+        <item>Sweaters</item>
+        <item>Dresses</item>
+        <item>Shirts</item>
+        <item>Pants</item>
+        <item>Skirts</item>
+        <item>Footwear</item>
+    </string-array>
+
+    <!--categoties-->
     <string-array name="category_Coats">
-        <item>Rain</item>
+        <item>Weather</item>
+        <item>Thickness</item>
     </string-array>
 
     <string-array name="category_Sweaters">
-        <item>Feature 4</item>
-        <item>Feature 5</item>
-        <item>Feature 6</item>
+        <item>Sleeves</item>
+        <item>Weather</item>
+        <item>Thickness</item>
     </string-array>
 
     <string-array name="category_Dresses">
         <item>Sleeves</item>
-        <!--<item>Length</item>
-        <item>Weather</item>-->
+        <item>Length</item>
+        <item>Weather</item>
     </string-array>
 
+    <string-array name="category_Shirts">
+        <item>Sleeves</item>
+        <item>Weather</item>
+        <item>Thickness</item>
+    </string-array>
+
+    <string-array name="category_Pants">
+        <item>Length</item>
+        <item>Weather</item>
+        <item>Thickness</item>
+    </string-array>
+
+    <string-array name="category_Skirts">
+        <item>Length</item>
+        <item>Weather</item>
+        <item>Thickness</item>
+    </string-array>
+
+    <string-array name="category_Footwear">
+        <item>Weather</item>
+    </string-array>
+
+    <!--features-->
     <string-array name="feature_Sleeves">
         <item>Sleeveless</item>
         <item>Short sleeves</item>
         <item>Long sleeves</item>
     </string-array>
 
+    <string-array name="feature_Thickness">
+        <item>Light</item>
+        <item>Medium</item>
+        <item>Heavy</item>
+    </string-array>
+
+    <string-array name="feature_Length">
+        <item>Short</item>
+        <item>knee length</item>
+        <item>Long</item>
+    </string-array>
+
+    <string-array name="feature_Weather">
+        <item>Sunny</item>
+        <item>Cloudy</item>
+        <item>Partly cloudy</item>
+        <item>Rainy</item>
+        <item>Stormy</item>
+        <item>Snowy</item>
+        <item>Foggy</item>
+        <item>Heat wave</item>
+        <item>Cold wave</item>
+        <item>Freezing rain</item>
+        <item>Dust storm</item>
+        <item>Gusty winds</item>
+    </string-array>
 </resources>

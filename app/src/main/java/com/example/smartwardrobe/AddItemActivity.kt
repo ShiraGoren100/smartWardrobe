@@ -1,8 +1,11 @@
 package com.example.smartwardrobe
-import com.google.android.material.R.style.Widget_MaterialComponents_TextInputLayout_OutlinedBox_ExposedDropdownMenu
+
+import android.content.Intent
+import android.graphics.Bitmap
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.*
@@ -13,26 +16,27 @@ import com.google.android.material.textfield.TextInputLayout
 class AddItemActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityAddItemBinding
+    private lateinit var imageView: ImageView
+    private lateinit var propertyMap:MutableMap<String,String>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddItemBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        setSupportActionBar(binding.appBar.toolbar)
 
+        //take a pictur
+        imageView = binding.imgView
+        imageView.setOnClickListener {
+            val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            startActivityForResult(takePictureIntent, 1)
+        }
 
-//        val categories = resources.getStringArray(R.array.categories)
-//        val categories_adapter = ArrayAdapter<String>(this, R.layout.list_item,categories)
-//        (binding.categoryInput.editText as? AutoCompleteTextView)?.setAdapter(categories_adapter)
-
-        /*val colors = resources.getStringArray(R.array.colors)
-        val colors_adapter = ArrayAdapter<String>(this, R.layout.list_item,colors)
-        (binding.colorInput.editText as? AutoCompleteTextView)?.setAdapter(colors_adapter)*/
-
+        //categories
         val categoryInput = findViewById<AutoCompleteTextView>(R.id.tv_category)
         val categories = resources.getStringArray(R.array.categories)
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, categories)
-        categoryInput.setAdapter(adapter)
+        val categoryAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, categories)
+        categoryInput.setAdapter(categoryAdapter)
 
         val featureMap = mutableMapOf<String, List<String>>()
 
@@ -50,6 +54,16 @@ class AddItemActivity : AppCompatActivity() {
                 resources.getIdentifier(arrayName, "array", packageName)
             )
             updateFeatures(features)
+        }
+
+        //colors
+        val colorInput = findViewById<AutoCompleteTextView>(R.id.tv_color)
+        val colors = resources.getStringArray(R.array.colors)
+        val colorAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, colors)
+        colorInput.setAdapter(colorAdapter)
+
+        binding.btnSave.setOnClickListener(){
+
         }
 
 /*
@@ -78,11 +92,13 @@ class AddItemActivity : AppCompatActivity() {
     }
 
     private fun updateFeatures(features: Array<String>) {
+         lateinit var fname:String
         binding.featureContainer.removeAllViews()
         features?.forEach { feature ->
             val featureInputLayout = LayoutInflater.from(this@AddItemActivity)
                 .inflate(R.layout.item_spinner, null) as TextInputLayout
 
+            fname=feature
             featureInputLayout.hint = feature
             val properties = resources.getStringArray(resources.getIdentifier("feature_$feature", "array", packageName))
 
@@ -92,13 +108,28 @@ class AddItemActivity : AppCompatActivity() {
                 android.R.layout.simple_spinner_dropdown_item,
                 properties
             )
+            featureAutoCompleteTextView.hint=feature
             featureAutoCompleteTextView.setAdapter(adapter)
             featureAutoCompleteTextView.dropDownAnchor = featureInputLayout.id
+            featureAutoCompleteTextView.setOnItemClickListener { parent, view, position, id ->
+                val valuek = parent.getItemAtPosition(position).toString()
+//                propertyMap[feature]=valuek
+
+                // Use the safe-call operator to access the put method of propertyMap
+//                propertyMap?.put(fname, valuek)
+            }
 
             binding.featureContainer.addView(featureInputLayout)
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
 
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            val imageBitmap = data?.extras?.get("data") as Bitmap
+            imageView.setImageBitmap(imageBitmap)
+        }
+    }
 
 }

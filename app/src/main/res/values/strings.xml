@@ -68,6 +68,7 @@
     <!--add item-->
     <string name="category">Category</string>
     <string name="color">Color</string>
+    <string name="save">Save</string>
 
 
 </resources>
