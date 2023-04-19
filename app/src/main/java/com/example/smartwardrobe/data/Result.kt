@@ -1,5 +1,7 @@
 package com.example.smartwardrobe.data
 
+import com.example.smartwardrobe.data.model.LoggedInUser
+
 /**
  * A generic class that holds a value with its loading status.
  * @param <T>

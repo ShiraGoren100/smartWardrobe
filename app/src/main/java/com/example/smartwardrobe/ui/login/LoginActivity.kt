@@ -27,8 +27,10 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val username = binding.username
-        val password = binding.password
+        val username = binding.etUsername
+        val password = binding.etPassword
+        val passLayout = binding.etPasswordLayout
+        val userLayout = binding.etUsernameLayout
         val login = binding.login
         val loading = binding.loading
 
@@ -42,10 +44,14 @@ class LoginActivity : AppCompatActivity() {
             login.isEnabled = loginState.isDataValid
 
             if (loginState.usernameError != null) {
-                username.error = getString(loginState.usernameError)
+                userLayout!!.error = getString(loginState.usernameError)
+            } else {
+                userLayout!!.error = null
             }
             if (loginState.passwordError != null) {
-                password.error = getString(loginState.passwordError)
+                passLayout!!.error = getString(loginState.passwordError)
+            } else {
+                passLayout!!.error = null
             }
         })
 
@@ -58,43 +64,52 @@ class LoginActivity : AppCompatActivity() {
             }
             if (loginResult.success != null) {
                 updateUiWithUser(loginResult.success)
-                
+
             }
             setResult(Activity.RESULT_OK)
 
             //Complete and destroy login activity once successful
-            finish()
+            //finish()
+            //todo:start activity
         })
 
-        username.afterTextChanged {
-            loginViewModel.loginDataChanged(
-                username.text.toString(),
-                password.text.toString()
-            )
-        }
-
-        password.apply {
-            afterTextChanged {
+        username?.afterTextChanged {
+            if (password != null) {
                 loginViewModel.loginDataChanged(
                     username.text.toString(),
                     password.text.toString()
                 )
             }
+        }
+
+        password?.apply {
+            afterTextChanged {
+                if (username != null) {
+                    loginViewModel.loginDataChanged(
+                        username.text.toString(),
+                        password.text.toString()
+                    )
+                }
+            }
 
             setOnEditorActionListener { _, actionId, _ ->
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE ->
-                        loginViewModel.login(
-                            username.text.toString(),
-                            password.text.toString()
-                        )
+                        if (username != null) {
+                            loginViewModel.login(
+                                username.text.toString(),
+                                password.text.toString()
+                            )
+                        }
                 }
                 false
             }
 
             login.setOnClickListener {
                 loading.visibility = View.VISIBLE
-                loginViewModel.login(username.text.toString(), password.text.toString())
+                if (username != null) {
+                    loginViewModel.login(username.text.toString(), password.text.toString())
+                }
             }
         }
     }
