@@ -1,7 +1,5 @@
-import ssl
-
 import mysql.connector
-print(mysql.connector.__version__)
+# print(mysql.connector.__version__)
 
 # Establish a connection to the MySQL server
 db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
