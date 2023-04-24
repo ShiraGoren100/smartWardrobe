@@ -2,22 +2,26 @@ package com.example.smartwardrobe
 
 import android.content.Intent
 import android.graphics.Bitmap
-
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.smartwardrobe.databinding.ActivityAddItemBinding
 import com.google.android.material.textfield.TextInputLayout
+import com.google.gson.Gson
+import okhttp3.internal.notify
 
 class AddItemActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityAddItemBinding
     private lateinit var imageView: ImageView
-    private lateinit var propertyMap:MutableMap<String,String>
+    private lateinit var propertyMap: MutableMap<String, String>
+    private lateinit var lst:ArrayList<ItemList>
+    private lateinit var lstAdapter:CustomAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +35,10 @@ class AddItemActivity : AppCompatActivity() {
             val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             startActivityForResult(takePictureIntent, 1)
         }
-
+        lst= ArrayList<ItemList>()
+        binding.featureContainer.layoutManager=LinearLayoutManager(this)
+         lstAdapter=CustomAdapter(this@AddItemActivity,lst)
+        binding.featureContainer.adapter=lstAdapter
         //categories
         val categoryInput = findViewById<AutoCompleteTextView>(R.id.tv_category)
         val categories = resources.getStringArray(R.array.categories)
@@ -53,6 +60,8 @@ class AddItemActivity : AppCompatActivity() {
             val features = resources.getStringArray(
                 resources.getIdentifier(arrayName, "array", packageName)
             )
+            propertyMap = mutableMapOf<String, String>()
+           // lst=ArrayList<ItemList>()
             updateFeatures(features)
         }
 
@@ -62,7 +71,21 @@ class AddItemActivity : AppCompatActivity() {
         val colorAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, colors)
         colorInput.setAdapter(colorAdapter)
 
-        binding.btnSave.setOnClickListener(){
+        binding.btnSave.setOnClickListener() {
+         /*   for (i in 0 until binding.featureContainer.childCount) {
+                val view = binding.featureContainer.getChildAt(i)
+                if (view is TextInputLayout) {
+                    val autoCompleteTextView = view.findViewById<AutoCompleteTextView>(R.id.tv_feature)
+                    val text = autoCompleteTextView.text.toString()
+                    // Do something with the text
+                }
+            }
+*/
+            val gson = Gson()
+            val json = gson.toJson(propertyMap)
+
+// Output the JSON string
+            println(json)
 
         }
 
@@ -92,34 +115,46 @@ class AddItemActivity : AppCompatActivity() {
     }
 
     private fun updateFeatures(features: Array<String>) {
-         lateinit var fname:String
+        lateinit var fname: String
         binding.featureContainer.removeAllViews()
         features?.forEach { feature ->
             val featureInputLayout = LayoutInflater.from(this@AddItemActivity)
                 .inflate(R.layout.item_spinner, null) as TextInputLayout
 
-            fname=feature
+            fname = feature
             featureInputLayout.hint = feature
             val properties = resources.getStringArray(resources.getIdentifier("feature_$feature", "array", packageName))
 
+            lst.add(ItemList(feature, properties.toList()))
+            lstAdapter.notifyDataSetChanged()
+/*
             val featureAutoCompleteTextView = featureInputLayout.findViewById<AutoCompleteTextView>(R.id.tv_feature)
-            val adapter = ArrayAdapter(
-                this@AddItemActivity,
-                android.R.layout.simple_spinner_dropdown_item,
-                properties
-            )
-            featureAutoCompleteTextView.hint=feature
+            val adapter = ArrayAdapter(this@AddItemActivity, android.R.layout.simple_spinner_dropdown_item, properties)
             featureAutoCompleteTextView.setAdapter(adapter)
             featureAutoCompleteTextView.dropDownAnchor = featureInputLayout.id
-            featureAutoCompleteTextView.setOnItemClickListener { parent, view, position, id ->
+
+            featureAutoCompleteTextView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+//                val parentView = featureAutoCompleteTextView.parent
+
+                val textInputLayout = findViewById<TextInputLayout>(R.id.feature_input)
+                val hint = textInputLayout.hint.toString()
                 val valuek = parent.getItemAtPosition(position).toString()
-//                propertyMap[feature]=valuek
+                propertyMap[hint] = valuek
 
-                // Use the safe-call operator to access the put method of propertyMap
-//                propertyMap?.put(fname, valuek)
+
             }
+*/
+            /*  featureAutoCompleteTextView.setOnItemClickListener { parent, view, position, id ->
+                  val valuek = parent.getItemAtPosition(position).toString()
+  //                fname= featureAutoCompleteTextView.hint.toString()
+                  featureInputLayout.hint
+                  propertyMap[feature] = valuek
 
-            binding.featureContainer.addView(featureInputLayout)
+                  // Use the safe-call operator to access the put method of propertyMap
+  //                propertyMap?.put(fname, valuek)
+              }*/
+
+//            binding.featureContainer.addView(featureInputLayout)
         }
     }
 
