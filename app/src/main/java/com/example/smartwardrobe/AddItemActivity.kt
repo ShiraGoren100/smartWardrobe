@@ -2,18 +2,24 @@ package com.example.smartwardrobe
 
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.smartwardrobe.databinding.ActivityAddItemBinding
 import com.google.android.material.textfield.TextInputLayout
 import com.google.gson.Gson
 import okhttp3.internal.notify
+import java.io.ByteArrayOutputStream
+import java.io.File
 
 class AddItemActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -61,7 +67,7 @@ class AddItemActivity : AppCompatActivity() {
                 resources.getIdentifier(arrayName, "array", packageName)
             )
             propertyMap = mutableMapOf<String, String>()
-           // lst=ArrayList<ItemList>()
+            lst.clear()
             updateFeatures(features)
         }
 
@@ -72,19 +78,29 @@ class AddItemActivity : AppCompatActivity() {
         colorInput.setAdapter(colorAdapter)
 
         binding.btnSave.setOnClickListener() {
-         /*   for (i in 0 until binding.featureContainer.childCount) {
+            val bitmap = (imageView.drawable as BitmapDrawable).bitmap
+
+            val base64=convertBitmapToBase64(bitmap)
+
+            propertyMap["img"]=base64
+            propertyMap["category"]=binding.tvCategory.text.toString()
+            propertyMap["color"]=binding.tvColor.text.toString()
+
+            for (i in 0 until binding.featureContainer.childCount) {
                 val view = binding.featureContainer.getChildAt(i)
                 if (view is TextInputLayout) {
+                    val hint= view.hint.toString()
                     val autoCompleteTextView = view.findViewById<AutoCompleteTextView>(R.id.tv_feature)
                     val text = autoCompleteTextView.text.toString()
                     // Do something with the text
+                    propertyMap[hint] = text
                 }
             }
-*/
             val gson = Gson()
             val json = gson.toJson(propertyMap)
 
-// Output the JSON string
+
+            // Output the JSON string
             println(json)
 
         }
@@ -112,6 +128,12 @@ class AddItemActivity : AppCompatActivity() {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 */
+    }
+    fun convertBitmapToBase64(bitmap: Bitmap): String {
+        val outputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        val byteArray = outputStream.toByteArray()
+        return Base64.encodeToString(byteArray, Base64.DEFAULT)
     }
 
     private fun updateFeatures(features: Array<String>) {
@@ -164,6 +186,8 @@ class AddItemActivity : AppCompatActivity() {
         if (requestCode == 1 && resultCode == RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
             imageView.setImageBitmap(imageBitmap)
+
+
         }
     }
 
