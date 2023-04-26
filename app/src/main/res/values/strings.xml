@@ -69,6 +69,8 @@
     <string name="category">Category</string>
     <string name="color">Color</string>
     <string name="save">Save</string>
+    <string name="success">Item added successfully</string>
+    <string name="failure">There was a problem, please try again later</string>
 
 
 </resources>

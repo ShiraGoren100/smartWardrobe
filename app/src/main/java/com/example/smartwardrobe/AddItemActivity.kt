@@ -3,7 +3,6 @@ package com.example.smartwardrobe
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
-import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Base64
@@ -11,23 +10,21 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.FileProvider
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.smartwardrobe.databinding.ActivityAddItemBinding
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 import com.google.gson.Gson
-import okhttp3.internal.notify
 import java.io.ByteArrayOutputStream
-import java.io.File
 
-class AddItemActivity : AppCompatActivity() {
+class AddItemActivity : AppCompatActivity(),RepositoryCallback  {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityAddItemBinding
     private lateinit var imageView: ImageView
     private lateinit var propertyMap: MutableMap<String, String>
-    private lateinit var lst:ArrayList<ItemList>
-    private lateinit var lstAdapter:CustomAdapter
+    private lateinit var lst: ArrayList<ItemList>
+    private lateinit var lstAdapter: CustomAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,10 +38,10 @@ class AddItemActivity : AppCompatActivity() {
             val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             startActivityForResult(takePictureIntent, 1)
         }
-        lst= ArrayList<ItemList>()
-        binding.featureContainer.layoutManager=LinearLayoutManager(this)
-         lstAdapter=CustomAdapter(this@AddItemActivity,lst)
-        binding.featureContainer.adapter=lstAdapter
+        lst = ArrayList<ItemList>()
+        binding.featureContainer.layoutManager = LinearLayoutManager(this)
+        lstAdapter = CustomAdapter(this@AddItemActivity, lst)
+        binding.featureContainer.adapter = lstAdapter
         //categories
         val categoryInput = findViewById<AutoCompleteTextView>(R.id.tv_category)
         val categories = resources.getStringArray(R.array.categories)
@@ -80,16 +77,16 @@ class AddItemActivity : AppCompatActivity() {
         binding.btnSave.setOnClickListener() {
             val bitmap = (imageView.drawable as BitmapDrawable).bitmap
 
-            val base64=convertBitmapToBase64(bitmap)
+            val base64 = convertBitmapToBase64(bitmap)
 
-            propertyMap["img"]=base64
-            propertyMap["category"]=binding.tvCategory.text.toString()
-            propertyMap["color"]=binding.tvColor.text.toString()
+            propertyMap["img"] = base64
+            propertyMap["category"] = binding.tvCategory.text.toString()
+            propertyMap["color"] = binding.tvColor.text.toString()
 
             for (i in 0 until binding.featureContainer.childCount) {
                 val view = binding.featureContainer.getChildAt(i)
                 if (view is TextInputLayout) {
-                    val hint= view.hint.toString()
+                    val hint = view.hint.toString()
                     val autoCompleteTextView = view.findViewById<AutoCompleteTextView>(R.id.tv_feature)
                     val text = autoCompleteTextView.text.toString()
                     // Do something with the text
@@ -99,7 +96,8 @@ class AddItemActivity : AppCompatActivity() {
             val gson = Gson()
             val json = gson.toJson(propertyMap)
 
-
+            val rep = AddRepository(this)
+            rep.addItem(json)
             // Output the JSON string
             println(json)
 
@@ -129,6 +127,7 @@ class AddItemActivity : AppCompatActivity() {
         }
 */
     }
+
     fun convertBitmapToBase64(bitmap: Bitmap): String {
         val outputStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
@@ -189,6 +188,19 @@ class AddItemActivity : AppCompatActivity() {
 
 
         }
+    }
+
+    override fun onSuccess() {
+        Snackbar.make(binding.btnSave, R.string.success, Snackbar.LENGTH_LONG)
+            .setAction("Action", null).show()
+
+        finish()
+    }
+
+    override fun onError(message: String) {
+        Snackbar.make(binding.btnSave, R.string.failure, Snackbar.LENGTH_LONG)
+            .setAction("Action", null).show()
+        finish()
     }
 
 }
