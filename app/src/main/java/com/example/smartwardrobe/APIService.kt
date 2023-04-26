@@ -13,9 +13,9 @@ import retrofit2.http.POST
 interface APIService {
 
     //    @POST("/register")
-//    fun registerUser(@Body cunnectedUser:User ): Response<ResponseBody>
-    @GET("/register")
-    fun registerUser(@Body connectedUser: User): Call<LoggedInUser>
+//    fun registerUser(@Body connectedUser:User ): Response<ResponseBody>
+    @GET("/login")
+    fun loginUser(@Body connectedUser: User): Call<LoggedInUser>
 
     @GET("/api/users")
     fun getUsers(): Call<List<LoggedInUser>>

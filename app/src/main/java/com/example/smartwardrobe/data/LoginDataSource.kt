@@ -21,7 +21,7 @@ class LoginDataSource {
         try {
             // TODO: handle loggedInUser authentication
             var retrofit = RetrofitClient.myApi
-            val call = retrofit.registerUser(user)
+            val call = retrofit.loginUser(user)
             var pname: String? =null
             var uid: String? =null
 

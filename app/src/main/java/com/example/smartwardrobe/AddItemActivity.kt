@@ -103,29 +103,6 @@ class AddItemActivity : AppCompatActivity(),RepositoryCallback  {
 
         }
 
-/*
-        binding.tvCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val selectedCategory = parent?.getItemAtPosition(position).toString()
-                val features = featureMap[selectedCategory]
-                Snackbar.make(view!!, R.string.app_name, Snackbar.LENGTH_SHORT).show()
-                binding.featureContainer.removeAllViews()
-
-                features?.forEach { feature ->
-                    val checkBox = CheckBox(this@AddItemActivity)
-                    checkBox.text = feature
-                    checkBox.layoutParams = LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT
-                    )
-                    binding.featureContainer.addView(checkBox)
-                }
-
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
-*/
     }
 
     fun convertBitmapToBase64(bitmap: Bitmap): String {
@@ -148,34 +125,7 @@ class AddItemActivity : AppCompatActivity(),RepositoryCallback  {
 
             lst.add(ItemList(feature, properties.toList()))
             lstAdapter.notifyDataSetChanged()
-/*
-            val featureAutoCompleteTextView = featureInputLayout.findViewById<AutoCompleteTextView>(R.id.tv_feature)
-            val adapter = ArrayAdapter(this@AddItemActivity, android.R.layout.simple_spinner_dropdown_item, properties)
-            featureAutoCompleteTextView.setAdapter(adapter)
-            featureAutoCompleteTextView.dropDownAnchor = featureInputLayout.id
 
-            featureAutoCompleteTextView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-//                val parentView = featureAutoCompleteTextView.parent
-
-                val textInputLayout = findViewById<TextInputLayout>(R.id.feature_input)
-                val hint = textInputLayout.hint.toString()
-                val valuek = parent.getItemAtPosition(position).toString()
-                propertyMap[hint] = valuek
-
-
-            }
-*/
-            /*  featureAutoCompleteTextView.setOnItemClickListener { parent, view, position, id ->
-                  val valuek = parent.getItemAtPosition(position).toString()
-  //                fname= featureAutoCompleteTextView.hint.toString()
-                  featureInputLayout.hint
-                  propertyMap[feature] = valuek
-
-                  // Use the safe-call operator to access the put method of propertyMap
-  //                propertyMap?.put(fname, valuek)
-              }*/
-
-//            binding.featureContainer.addView(featureInputLayout)
         }
     }
 
