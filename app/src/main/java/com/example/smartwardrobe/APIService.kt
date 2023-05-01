@@ -17,6 +17,9 @@ interface APIService {
     @GET("/login")
     fun loginUser(@Body connectedUser: User): Call<LoggedInUser>
 
+    @GET("/register")
+    fun registerUser(@Body connectedUser: User): Call<LoggedInUser>
+
     @GET("/api/users")
     fun getUsers(): Call<List<LoggedInUser>>
 

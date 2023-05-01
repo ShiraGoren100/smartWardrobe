@@ -16,14 +16,14 @@ import java.lang.NullPointerException
  */
 class LoginDataSource {
 
-    fun login(username: String, password: String): Result<LoggedInUser> {
-        val user = User(username, password)
+    fun login(mail: String, password: String): Result<LoggedInUser> {
+        val user = User(email = mail, password = password)
         try {
             // TODO: handle loggedInUser authentication
             var retrofit = RetrofitClient.myApi
             val call = retrofit.loginUser(user)
-            var pname: String? =null
-            var uid: String? =null
+            var pname: String? = null
+            var uid: String? = null
 
             call.enqueue(object : Callback<LoggedInUser> {
                 override fun onResponse(call: Call<LoggedInUser>, response: Response<LoggedInUser>) {
@@ -42,9 +42,45 @@ class LoginDataSource {
                 }
 
             })
-            if (uid==null||pname==null){
+            if (uid == null || pname == null) {
                 return Result.Error(NullPointerException())
-            }else{
+            } else {
+                val fakeUser = LoggedInUser(uid!!, pname!!)
+                return Result.Success(fakeUser)
+            }
+        } catch (e: Throwable) {
+            return Result.Error(IOException("Error logging in", e))
+        }
+    }
+
+    fun register(username: String, mail: String, password: String): Result<LoggedInUser> {
+        val user = User(username, mail, password)
+        try {
+            var retrofit = RetrofitClient.myApi
+            val call = retrofit.registerUser(user)
+            var pname: String? = null
+            var uid: String? = null
+
+            call.enqueue(object : Callback<LoggedInUser> {
+                override fun onResponse(call: Call<LoggedInUser>, response: Response<LoggedInUser>) {
+                    val userRes = response.body()
+                    if (userRes == null) {
+
+                    }
+                    Log.i(ContentValues.TAG, "onResponse: " + userRes)
+                    pname = userRes.displayName
+                    uid = userRes.userId
+                }
+
+                override fun onFailure(call: Call<LoggedInUser>?, t: Throwable) {
+                    // handle network error here
+                    Log.e(ContentValues.TAG, "Error: " + t.message)
+                }
+
+            })
+            if (uid == null || pname == null) {
+                return Result.Error(NullPointerException())
+            } else {
                 val fakeUser = LoggedInUser(uid!!, pname!!)
                 return Result.Success(fakeUser)
             }

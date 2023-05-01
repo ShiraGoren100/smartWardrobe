@@ -1,63 +1,69 @@
-package com.example.smartwardrobe.ui.login
+package com.example.smartwardrobe.ui.register
 
 import android.app.Activity
 import android.content.Intent
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.Toast
-import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.example.smartwardrobe.MainActivity
+import com.example.smartwardrobe.databinding.ActivityRegisterBinding
+
 import com.example.smartwardrobe.R
-import com.example.smartwardrobe.databinding.ActivityLoginBinding
-import com.example.smartwardrobe.ui.register.RegisterActivity
+import com.example.smartwardrobe.ui.login.LoggedInUserView
+import com.example.smartwardrobe.ui.login.LoginActivity
 
-class LoginActivity : AppCompatActivity() {
+class RegisterActivity : AppCompatActivity() {
 
-    private lateinit var loginViewModel: LoginViewModel
-    private lateinit var binding: ActivityLoginBinding
+    private lateinit var registerViewModel: RegisterViewModel
+    private lateinit var binding: ActivityRegisterBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityLoginBinding.inflate(layoutInflater)
+        binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val username = binding.etUsername
+        val mail = binding.etMail
         val password = binding.etPassword
-        val passLayout = binding.etPasswordLayout
-        val userLayout = binding.etUsernameLayout
         val login = binding.login
         val loading = binding.loading
 
-        loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
-            .get(LoginViewModel::class.java)
+        registerViewModel = ViewModelProvider(this, RegisterViewModelFactory())
+            .get(RegisterViewModel::class.java)
 
-        loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
-            val loginState = it ?: return@Observer
+        registerViewModel.registerFormState.observe(this@RegisterActivity, Observer {
+            val registerState = it ?: return@Observer
 
             // disable login button unless both username / password is valid
-            login.isEnabled = loginState.isDataValid
+            login.isEnabled = registerState.isDataValid
 
-            if (loginState.usernameError != null) {
-                userLayout!!.error = getString(loginState.usernameError)
+            if (registerState.usernameError != null) {
+                binding.etUsernameLayout!!.error = getString(registerState.usernameError)
             } else {
-                userLayout!!.error = null
+                binding.etUsernameLayout!!.error = null
             }
-            if (loginState.passwordError != null) {
-                passLayout!!.error = getString(loginState.passwordError)
+            if (registerState.mailError != null) {
+                binding.etMailLayout!!.error = getString(registerState.mailError)
             } else {
-                passLayout!!.error = null
+                binding.etMailLayout!!.error = null
+            }
+            if (registerState.passwordError != null) {
+                binding.etPasswordLayout!!.error = getString(registerState.passwordError)
+            } else {
+                binding.etPasswordLayout!!.error = null
             }
         })
 
-        loginViewModel.loginResult.observe(this@LoginActivity, Observer {
+        registerViewModel.registerResult.observe(this@RegisterActivity, Observer {
             val loginResult = it ?: return@Observer
 
             loading.visibility = View.GONE
@@ -66,60 +72,55 @@ class LoginActivity : AppCompatActivity() {
             }
             if (loginResult.success != null) {
                 updateUiWithUser(loginResult.success)
-
             }
             setResult(Activity.RESULT_OK)
 
             //Complete and destroy login activity once successful
-            //finish()
-//todo: save user to sharedprefrences
+            //todo: save user to sharedprefrences
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
+
+            finish()
         })
 
         username?.afterTextChanged {
-            if (password != null) {
-                loginViewModel.loginDataChanged(
-                    username.text.toString(),
-                    password.text.toString()
-                )
-            }
+            registerViewModel.registerDataChanged(
+                username?.text.toString(),
+                mail?.text.toString(),
+                password?.text.toString()
+            )
         }
 
         password?.apply {
             afterTextChanged {
-                if (username != null) {
-                    loginViewModel.loginDataChanged(
-                        username.text.toString(),
-                        password.text.toString()
-                    )
-                }
+                registerViewModel.registerDataChanged(
+                    username?.text.toString(),
+                    password.text.toString(),
+                    password.text.toString()
+                )
             }
 
             setOnEditorActionListener { _, actionId, _ ->
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE ->
-                        if (username != null) {
-                            loginViewModel.login(
-                                username.text.toString(),
-                                password.text.toString()
-                            )
-                        }
+                        registerViewModel.register(
+                            username?.text.toString(),
+                            mail?.text.toString(),
+                            password?.text.toString()
+                        )
                 }
                 false
             }
 
             login.setOnClickListener {
                 loading.visibility = View.VISIBLE
-                if (username != null) {
-                    loginViewModel.login(username.text.toString(), password.text.toString())
-                }
+                registerViewModel.register(username?.text.toString(), mail?.text.toString(), password.text.toString())
             }
         }
 
         binding.activityLink!!.setOnClickListener {
             try {
-                val intent = Intent(applicationContext, RegisterActivity::class.java)
+                val intent = Intent(applicationContext, LoginActivity::class.java)
                 startActivity(intent)
                 finish()
             } catch (e: Exception) {
@@ -158,6 +159,4 @@ class LoginActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
         })
     }
-
-
 }

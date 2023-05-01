@@ -45,6 +45,14 @@ class LoginRepository(val dataSource: LoginDataSource) {
         return result
     }
 
+    fun  register(username: String,mail:String, password: String): Result<LoggedInUser> {
+        val result = dataSource.register(username,mail, password)
+        if (result is Result.Success) {
+            setLoggedInUser(result.data)
+        }
+        return result
+    }
+
     private fun setLoggedInUser(loggedInUser: LoggedInUser?) {
         this.user = loggedInUser
 
