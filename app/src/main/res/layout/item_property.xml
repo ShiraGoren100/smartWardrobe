@@ -6,7 +6,7 @@
     android:padding="5dp">
 
     <TextView
-        android:id="@+id/key"
+        android:id="@+id/titleView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="key"
@@ -14,7 +14,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
     <TextView
-        android:id="@+id/value"
+        android:id="@+id/valueView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="value"

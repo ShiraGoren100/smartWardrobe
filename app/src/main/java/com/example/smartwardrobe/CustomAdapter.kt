@@ -24,11 +24,8 @@ class CustomAdapter(private val context:Context,private val mList: List<ItemList
 
     // binds the list items to a view
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
         val ItemsViewModel = mList[position]
-
         holder.inputLayout.hint=ItemsViewModel.feature
-
 //        holder.textView.text = ItemsViewModel.text
         val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, ItemsViewModel.properties)
         holder.textView.setAdapter(adapter)

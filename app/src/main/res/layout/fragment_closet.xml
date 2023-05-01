@@ -17,7 +17,7 @@
         app:endIconMode="dropdown_menu"
         app:entries="@array/categories"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
+        app:layout_constraintTop_toTopOf="parent">
 
         <AutoCompleteTextView
             android:id="@+id/tv_category"
@@ -28,7 +28,7 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
+    <LinearLayout
         android:id="@+id/clothes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
