@@ -28,11 +28,11 @@ class LoginRepository(val dataSource: LoginDataSource) {
         dataSource.logout()
     }
 
-    fun login(username: String, password: String): Result<LoggedInUser> {
+    suspend fun login(username: String, password: String): Result<LoggedInUser> {
 
         /*bla bla*/
         // handle login
-        val result = dataSource.login(username, password)
+       val result = dataSource.login(username, password)
         if (result is Result.Success) {
             setLoggedInUser(result.data)
 //            val sharedPreference = getSharedPreferences("PREFERENCE_NAME", Context.MODE_PRIVATE)
@@ -45,13 +45,7 @@ class LoginRepository(val dataSource: LoginDataSource) {
         return result
     }
 
-    fun  register(username: String,mail:String, password: String): Result<LoggedInUser> {
-        val result = dataSource.register(username,mail, password)
-        if (result is Result.Success) {
-            setLoggedInUser(result.data)
-        }
-        return result
-    }
+
 
     private fun setLoggedInUser(loggedInUser: LoggedInUser?) {
         this.user = loggedInUser
