@@ -14,16 +14,16 @@ interface APIService {
 
     //    @POST("/register")
 //    fun registerUser(@Body connectedUser:User ): Response<ResponseBody>
-    @GET("/login")
+    @POST("/login")
     fun loginUser(@Body connectedUser: User): Call<LoggedInUser>
 
-    @GET("/register")
+    @POST("/register")
     fun registerUser(@Body connectedUser: User): Call<LoggedInUser>
 
     @GET("/api/users")
     fun getUsers(): Call<List<LoggedInUser>>
 
-  @POST("/addItem")
-  fun addItem(@Body json: RequestBody): Call<ResponseBody>
+    @POST("/addItem")
+    fun addItem(@Body json: RequestBody): Call<ResponseBody>
 
 }

@@ -59,7 +59,7 @@ class ClosetFragment : Fragment() {
                 resources.getIdentifier(arrayName, "array", requireActivity().packageName)
             )
             items.clear()
-            items = getList("$category")
+//            items = getList("$category")
 
 
         }
@@ -71,6 +71,7 @@ class ClosetFragment : Fragment() {
         return root
     }
 
+/*
     private fun getList(category: String): ArrayList<ClothingItem> {
         val dataStr =
             """[{ "id":"1", "img": "string", "category": "Shirts", "color": "blue", "Sleeves": "Sleeveless", "Weather": "Heat wave", "Thickness": "Light" }, { "id":2, "img": "string", "category": "Shirts", "color": "blue", "Sleeves": "Sleeveless", "Weather": "Heat wave", "Thickness": "Light" }, { "id":3, "img": "string", "category": "Shirts", "color": "blue", "Sleeves": "Sleeveless", "Weather": "Heat wave", "Thickness": "Light" }]"""
@@ -90,6 +91,7 @@ class ClosetFragment : Fragment() {
             )
         }.toCollection(ArrayList())
     }
+*/
 
 
     override fun onDestroyView() {

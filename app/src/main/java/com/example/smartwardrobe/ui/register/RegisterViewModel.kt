@@ -4,12 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import android.util.Patterns
+import androidx.lifecycle.viewModelScope
 import com.example.smartwardrobe.data.Result
 
 import com.example.smartwardrobe.R
 import com.example.smartwardrobe.data.RegisterRepository
 import com.example.smartwardrobe.ui.login.LoggedInUserView
 import com.example.smartwardrobe.ui.login.LoginResult
+import kotlinx.coroutines.launch
 
 class RegisterViewModel(private val registerRepository: RegisterRepository) : ViewModel() {
 
@@ -19,15 +21,19 @@ class RegisterViewModel(private val registerRepository: RegisterRepository) : Vi
     private val _registerResult = MutableLiveData<LoginResult>()
     val registerResult: LiveData<LoginResult> = _registerResult
 
-    fun register(username: String, mail: String, password: String) {
+     fun register(username: String, mail: String, password: String) {
         // can be launched in a separate asynchronous job
-        val result = registerRepository.register(username, mail, password)
 
-        if (result is Result.Success) {
-            _registerResult.value = LoginResult(success = result.data?.let { LoggedInUserView(displayName = it.displayName, id = result.data.userId) })
-        } else {
-            _registerResult.value = LoginResult(error = R.string.login_failed)
-        }
+
+         viewModelScope.launch {
+             val result = registerRepository.register(username, mail, password)
+
+             if (result is Result.Success) {
+                 _registerResult.value = LoginResult(success = result.data?.let { LoggedInUserView(displayName = it.displayName, id = result.data.userId) })
+             } else {
+                 _registerResult.value = LoginResult(error = R.string.login_failed)
+             }
+         }
     }
 
     fun registerDataChanged(username: String, mail: String, password: String) {

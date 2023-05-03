@@ -24,7 +24,7 @@ class RegisterRepository(val dataSource: RegisterDataSource) {
         dataSource.logout()
     }
 
-    fun register(username: String,mail:String ,password: String): Result<LoggedInUser> {
+     suspend fun register(username: String, mail:String, password: String): Result<LoggedInUser> {
 
         /*bla bla*/
         // handle login
