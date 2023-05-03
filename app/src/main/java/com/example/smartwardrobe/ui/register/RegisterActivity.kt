@@ -72,15 +72,14 @@ class RegisterActivity : AppCompatActivity() {
             }
             if (loginResult.success != null) {
                 updateUiWithUser(loginResult.success)
+                setResult(Activity.RESULT_OK)
+
+                //Complete and destroy login activity once successful
+                //todo: save user to sharedprefrences
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finish()
             }
-            setResult(Activity.RESULT_OK)
-
-            //Complete and destroy login activity once successful
-            //todo: save user to sharedprefrences
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-
-//            finish()
         })
 
         username?.afterTextChanged {
