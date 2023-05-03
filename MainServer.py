@@ -1,8 +1,11 @@
 import mysql.connector
+
+from API import app
+
 # print(mysql.connector.__version__)
 
 # Establish a connection to the MySQL server
-db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
 
 # Create a cursor object to execute queries
 cursordb = db.cursor()
