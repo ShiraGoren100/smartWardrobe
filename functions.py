@@ -31,6 +31,7 @@ def insert_new_user(username, password, email):
     return get_user_id(password, email)
 
 
+
 # register
 def get_user_id(password, email):
     """
@@ -49,9 +50,10 @@ def get_user_id(password, email):
         # Fetch the result
         user_id = cursordb.fetchone()[0]
         user_name = cursordb.fetchone()[1]
-        dump=cursordb.fetchall()
+        dump = cursordb.fetchall()
         cursordb.close()
         db.close()
+        return str(user_id), user_name
     except Exception as e:
         print(f"An error occurred: {e}")
-    return user_id, user_name
+

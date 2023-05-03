@@ -5,6 +5,12 @@ import functions
 app = Flask(__name__)
 
 
+class LoggedInUser:
+    def __init__(self, userId, displayName):
+        self.userId = userId
+        self.displayName = displayName
+
+
 # define a route for the root endpoint
 @app.route('/')
 def hello_world():
@@ -28,14 +34,19 @@ def register():
     email = request.json.get('email')
     password = request.json.get('password')
     username = request.json.get('username')
-    return functions.insert_new_user(username,password,email)
+    uid, uname = functions.insert_new_user(username, password, email)
+    user = LoggedInUser(uid, uname)
+    return jsonify(user.__dict__)
+
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     email = request.json.get('email')
     password = request.json.get('password')
-    return functions.get_user_id(password, email)
+    uid, uname = functions.get_user_id(password, email)
+    user = LoggedInUser(uid, uname)
+    return jsonify(user.__dict__)
 
 
 @app.route('/addItem', methods=['POST'])
