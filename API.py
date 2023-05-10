@@ -6,6 +6,9 @@ app = Flask(__name__)
 
 
 class LoggedInUser:
+    """
+    user object
+    """
     def __init__(self, userId, displayName):
         self.userId = userId
         self.displayName = displayName
@@ -53,6 +56,7 @@ def login():
 def addItem():
     data = request.get_json()
     print(data)
+    functions.insert_new_item(data)
     return {'result': 'success'}
 
 
