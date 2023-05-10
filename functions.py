@@ -115,4 +115,25 @@ def insert_new_item(data):
     except Exception as e:
         print(f"An error occurred: {e}")
 
-
+def get_item_pic(item_id):
+    """
+    returns item picture
+    :param item_id:
+    :return:
+    """
+    try:
+        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="smatrwardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
+                                     port=3307)
+        cursordb = db.cursor()
+        cursordb.execute(
+            "SELECT pic FROM clothing_item WHERE  item_id = %s",
+            ((item_id)))
+        # Fetch the result
+        pic = cursordb.fetchone()[0]
+        dump = cursordb.fetchall()
+        cursordb.close()
+        db.close()
+        return pic
+    except Exception as e:
+        print(f"An error occurred: {e}")
