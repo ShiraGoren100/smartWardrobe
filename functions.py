@@ -78,11 +78,7 @@ def insert_new_item(data):
         category = data['category']
 
         # get category id from categories table
-        cursordb.execute(
-            "SELECT id FROM categories WHERE  type = %s",
-            ((category)))
-        # Fetch the result
-        category_id = cursordb.fetchone()[0]
+        category_id = get_category_id(category)
 
         #add clothing item to db
         sql = "INSERT INTO clothing_item (picture, user_id, category) VALUES (%s, %s, %s)"
@@ -138,10 +134,28 @@ def get_item_pic(item_id):
     except Exception as e:
         print(f"An error occurred: {e}")
 
+def get_category_id(category):
+    try:
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="smatrwardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
+                                     port=3307)
+        cursordb = db.cursor()
+        cursordb.execute(
+            "SELECT id FROM categories WHERE  type = %s",
+            ((category)))
+        # Fetch the result
+        cat_id = cursordb.fetchone()[0]
+        dump = cursordb.fetchall()
+        cursordb.close()
+        db.close()
+        return str(cat_id)
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
-def get_closet(user_id):
+
+def get_closet(user_id, category):
     """
-    returns all items in users closet
+    returns all items of certain category in users closet
     :param user_id:
     :return:
     """
@@ -150,9 +164,10 @@ def get_closet(user_id):
         db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
                                      port=3307)
         cursordb = db.cursor()
+        category_id = get_category_id(category)
         cursordb.execute(
-            "SELECT * FROM clothing_item WHERE  user_id = %s",
-            ((user_id)))
+            "SELECT * FROM clothing_item WHERE  user_id = %s and category= %s",
+            ((user_id), (category_id)))
         # Fetch the result
         data = cursordb.fetchall()
         cursordb.close()

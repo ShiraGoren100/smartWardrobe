@@ -13,6 +13,16 @@ class LoggedInUser:
         self.userId = userId
         self.displayName = displayName
 
+class clothingList:
+    """
+    each user has a list of items that belong to the same category.
+    The list consists of all data on item.
+    """
+    def __init__(self,userId, category, list):
+        self.userId = userId
+        self.category = category
+        self.list = list
+
 
 # define a route for the root endpoint
 @app.route('/')
@@ -69,9 +79,12 @@ def get_closet():
     category = request.args.get('category')
     print(userid+","+category)
     # Perform operations using userid and category
+    data = functions.get_closet(userid, category)
 
     # Return response as JSON
+    cList = clothingList(userid,category,data)
     # return jsonify(closet_items)
+    return jsonify(cList.__dict__)
 
 
 if __name__ == '__main__':
