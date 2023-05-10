@@ -63,7 +63,7 @@ def get_closet():
     # Get query parameters from request.args
     userid = request.args.get('id')
     category = request.args.get('category')
-
+    print(userid+","+category)
     # Perform operations using userid and category
 
     # Return response as JSON
