@@ -1,8 +1,11 @@
 package com.example.smartwardrobe
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import android.view.View
+import android.widget.TextView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -18,6 +21,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+    lateinit var username: String
+    lateinit var userid: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +31,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.appBarMain.toolbar)
+        val sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        if (sharedPreferences.contains("name")) {
+            username = sharedPreferences.getString("name", null).toString()
+            userid = sharedPreferences.getString("id", null).toString()
+        }
 
         binding.appBarMain.fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -40,11 +50,16 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_closet, R.id.nav_history,R.id.nav_settings
+                R.id.nav_home, R.id.nav_closet, R.id.nav_history, R.id.nav_settings
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+        val headerView: View = navView.getHeaderView(0)
+        val usernameTextView: TextView = headerView.findViewById(R.id.et_username)
+        if (sharedPreferences.contains("name")) {
+            usernameTextView.text = username
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -58,3 +73,5 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 }
+
+

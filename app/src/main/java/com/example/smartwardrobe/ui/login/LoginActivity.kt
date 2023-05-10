@@ -1,6 +1,7 @@
 package com.example.smartwardrobe.ui.login
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -35,6 +36,12 @@ class LoginActivity : AppCompatActivity() {
         val userLayout = binding.etUsernameLayout
         val login = binding.login
         val loading = binding.loading
+
+        val sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        if (sharedPreferences.contains("name")){
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
 
         loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
             .get(LoginViewModel::class.java)
@@ -72,6 +79,7 @@ class LoginActivity : AppCompatActivity() {
 
             //Complete and destroy login activity once successful
             //finish()
+            saveUser(loginResult.success)
 //todo: save user to sharedprefrences
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
@@ -126,6 +134,15 @@ class LoginActivity : AppCompatActivity() {
                 e.printStackTrace()
             }
         }
+    }
+
+    private fun saveUser(user: LoggedInUserView?) {
+        val sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+
+        editor.putString("name", user?.displayName)
+        editor.putString("id", user?.id)
+        editor.apply()
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {

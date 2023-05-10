@@ -11,13 +11,12 @@ import retrofit2.Response
 
 class AddRepository(private val callback: RepositoryCallback) {
 
-    fun addItem(json: String) {
+    fun addItem(userid:String,json: String) {
 
         var retrofit = RetrofitClient.myApi
         val requestBody = RequestBody.create("application/json".toMediaTypeOrNull(), json)
 
-        val call = retrofit.
-        addItem(requestBody)
+        val call = retrofit.addItem(userid,requestBody)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 // handle successful response

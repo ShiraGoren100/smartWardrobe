@@ -1,5 +1,6 @@
 package com.example.smartwardrobe
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -25,6 +26,8 @@ class AddItemActivity : AppCompatActivity(),RepositoryCallback  {
     private lateinit var propertyMap: MutableMap<String, String>
     private lateinit var lst: ArrayList<ItemList>
     private lateinit var lstAdapter: CustomAdapter
+    lateinit var username: String
+    lateinit var userid: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +45,12 @@ class AddItemActivity : AppCompatActivity(),RepositoryCallback  {
         binding.featureContainer.layoutManager = LinearLayoutManager(this)
         lstAdapter = CustomAdapter(this@AddItemActivity, lst)
         binding.featureContainer.adapter = lstAdapter
+        val sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        if (sharedPreferences.contains("name")) {
+            username = sharedPreferences.getString("name", null).toString()
+            userid = sharedPreferences.getString("id", null).toString()
+        }
+
         //categories
         val categoryInput = findViewById<AutoCompleteTextView>(R.id.tv_category)
         val categories = resources.getStringArray(R.array.categories)
@@ -97,7 +106,7 @@ class AddItemActivity : AppCompatActivity(),RepositoryCallback  {
             val json = gson.toJson(propertyMap)
 
             val rep = AddRepository(this)
-            rep.addItem(json)
+            rep.addItem(userid,json)
             // Output the JSON string
             println(json)
 

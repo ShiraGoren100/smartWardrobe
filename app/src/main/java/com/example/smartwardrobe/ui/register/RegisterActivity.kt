@@ -1,6 +1,7 @@
 package com.example.smartwardrobe.ui.register
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -76,6 +77,7 @@ class RegisterActivity : AppCompatActivity() {
 
                 //Complete and destroy login activity once successful
                 //todo: save user to sharedprefrences
+                saveUser(loginResult.success)
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
                 finish()
@@ -126,6 +128,14 @@ class RegisterActivity : AppCompatActivity() {
                 e.printStackTrace()
             }
         }
+    }
+    private fun saveUser(user: LoggedInUserView?) {
+        val sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+
+        editor.putString("name", user?.displayName)
+        editor.putString("id", user?.id)
+        editor.apply()
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {

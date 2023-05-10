@@ -10,12 +10,23 @@ import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.smartwardrobe.MainActivity
 
 import com.example.smartwardrobe.R
+import com.example.smartwardrobe.RetrofitClient
 import com.example.smartwardrobe.data.ClothingItem
 import com.example.smartwardrobe.data.Property
+import com.example.smartwardrobe.data.model.LoggedInUser
 import com.example.smartwardrobe.databinding.FragmentClosetBinding
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class ClosetFragment : Fragment() {
 
@@ -59,8 +70,12 @@ class ClosetFragment : Fragment() {
                 resources.getIdentifier(arrayName, "array", requireActivity().packageName)
             )
             items.clear()
-//            items = getList("$category")
-
+            items = getList("$category")!!
+//            if (items.isEmpty()) {
+//
+//            } else {
+//
+//            }
 
         }
 
@@ -69,6 +84,24 @@ class ClosetFragment : Fragment() {
 //            textView.text = it
 //        }
         return root
+    }
+
+    private fun getList(category: String): ArrayList<ClothingItem>? {
+        var retrofit = RetrofitClient.myApi
+        val queryParameters = mapOf("id" to (activity as MainActivity).userid, "category" to category)
+
+        GlobalScope.launch(Dispatchers.IO) {
+            val response = retrofit.getCloset(queryParameters).execute()
+            withContext(Dispatchers.Main) {
+                if (response.isSuccessful) {
+                    val data = response.body()
+                    // Do something with the data
+                } else {
+                    // Handle error
+                }
+            }
+        }
+        return ArrayList<ClothingItem>()
     }
 
 /*
