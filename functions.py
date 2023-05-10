@@ -137,3 +137,26 @@ def get_item_pic(item_id):
         return pic
     except Exception as e:
         print(f"An error occurred: {e}")
+
+
+def get_closet(user_id):
+    """
+    returns all items in users closet
+    :param user_id:
+    :return:
+    """
+    try:
+        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="smatrwardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
+                                     port=3307)
+        cursordb = db.cursor()
+        cursordb.execute(
+            "SELECT * FROM clothing_item WHERE  user_id = %s",
+            ((user_id)))
+        # Fetch the result
+        data = cursordb.fetchall()
+        cursordb.close()
+        db.close()
+        return data
+    except Exception as e:
+        print(f"An error occurred: {e}")
