@@ -52,8 +52,22 @@ def login():
 @app.route('/addItem', methods=['POST'])
 def addItem():
     data = request.get_json()
+    userid = request.args.get('id')
+    print(userid)
     print(data)
     return {'result': 'success'}
+
+
+@app.route('/closet')
+def get_closet():
+    # Get query parameters from request.args
+    userid = request.args.get('id')
+    category = request.args.get('category')
+
+    # Perform operations using userid and category
+
+    # Return response as JSON
+    # return jsonify(closet_items)
 
 
 if __name__ == '__main__':
