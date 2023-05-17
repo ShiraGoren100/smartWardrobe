@@ -25,6 +25,9 @@ interface APIService {
     @GET("/closet")
     fun getCloset(@QueryMap params: Map<String, String>): Call<ArrayList<ClothingItem>>
 
+    @GET("/outfit")
+    fun getOutfit(@QueryMap params: Map<String, String>): Call<ArrayList<ClothingItem>>
+
     @POST("/addItem")
     fun addItem(@Query("id") userid: String, @Body json: RequestBody): Call<ResponseBody>
 

@@ -59,6 +59,7 @@
     <string name="to_login">Already have a user? click</string>
     <string name="to_register">Don\'t have a user? click</string>
     <string name="here">here</string>
+    <string name="new_outfit">Generate a new outfit</string>
 
 
 </resources>

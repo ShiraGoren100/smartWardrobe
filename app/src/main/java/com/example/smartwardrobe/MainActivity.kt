@@ -1,7 +1,16 @@
 package com.example.smartwardrobe
 
+import android.location.Address
+import android.location.Geocoder
+import android.provider.Settings
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
@@ -15,15 +24,29 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import com.example.smartwardrobe.databinding.ActivityMainBinding
+import android.Manifest
+import android.annotation.SuppressLint
+import android.media.audiofx.BassBoost
+import android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS
+import android.widget.Toast
+import androidx.core.content.ContextCompat
+import com.example.smartwardrobe.ui.home.HomeFragment
+import java.util.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(){
+    companion object {
+        const val REQUEST_CODE_LOCATION_PERMISSION = 100
+    }
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     lateinit var username: String
     lateinit var userid: String
 
+    //    lateinit var locationManager:LocationManager
+    private lateinit var mFusedLocationClient: FusedLocationProviderClient
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -60,6 +83,89 @@ class MainActivity : AppCompatActivity() {
         if (sharedPreferences.contains("name")) {
             usernameTextView.text = username
         }
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        /*binding.btnLocation.setOnClickListener {
+            getLocation()
+        }*/
+    }
+
+    @SuppressLint("MissingPermission", "SetTextI18n")
+    public fun getLocation(): List<Address>? {
+        if (checkPermissions()) {
+            if (isLocationEnabled()) {
+                var addressList: List<Address>? = null
+
+                mFusedLocationClient.lastLocation.addOnCompleteListener(this) { task ->
+                    val location: Location? = task.result
+                    if (location != null) {
+                        val geocoder = Geocoder(this, Locale.getDefault())
+                        addressList = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+                        /* mainBinding.apply {
+     tvLatitude.text = "Latitude\n${list[0].latitude}"
+     tvLongitude.text = "Longitude\n${list[0].longitude}"
+     tvCountryName.text = "Country Name\n${list[0].countryName}"
+     tvLocality.text = "Locality\n${list[0].locality}"
+     tvAddress.text = "Address\n${list[0].getAddressLine(0)}"
+ }*/
+                    }
+                }
+                return addressList
+            } else {
+                Toast.makeText(this, "Please turn on location", Toast.LENGTH_LONG).show()
+                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                startActivity(intent)
+            }
+        } else {
+            requestPermissions()
+        }
+        return null
+    }
+
+    private fun isLocationEnabled(): Boolean {
+        val locationManager: LocationManager =
+            getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+            LocationManager.NETWORK_PROVIDER
+        )
+    }
+
+    private fun checkPermissions(): Boolean {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            return true
+        }
+        return false
+    }
+
+    private fun requestPermissions() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ),
+            REQUEST_CODE_LOCATION_PERMISSION
+        )
+    }
+
+    @SuppressLint("MissingSuperCall")
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == REQUEST_CODE_LOCATION_PERMISSION) {
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                getLocation()
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -72,6 +178,8 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+
+
 }
 
 
