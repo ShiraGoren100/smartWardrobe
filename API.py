@@ -68,7 +68,7 @@ def addItem():
     userid = request.args.get('id')
     print(userid)
     print(data)
-    functions.insert_new_item(data)
+    functions.insert_new_item(data, userid)
     return {'result': 'success'}
 
 
