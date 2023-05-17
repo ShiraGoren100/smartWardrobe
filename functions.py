@@ -195,8 +195,7 @@ def get_closet(user_id, category):
         cursordb = db.cursor()
         category_id = get_category_id(category)
         cursordb.execute(
-            "SELECT * FROM clothing_item WHERE  user_id = %s and category= %s",
-            ((user_id), (category_id)))
+            "SELECT * FROM clothing_item WHERE  user_id = %s and category= %s",(user_id, category_id))
         # Fetch the result
         data = cursordb.fetchall()
         cursordb.close()
