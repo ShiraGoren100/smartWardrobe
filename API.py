@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 
 import functions
 
@@ -29,6 +29,17 @@ class clothingList:
 def hello_world():
     return 'Hello, World!'
 
+
+# get weather report.
+@app.route('/temperature')
+def temperature():
+    longitude = request.json.get('longitude')
+    latitude = request.json.get('latitude')
+    r = request.get('https://api.openweathermap.org/data/2.5/weather?lat='+latitude+'.34&lon='+longitude+'.99&appid=8f3241a0140c7cbf04fd85bcb7b1cef9')
+    json_obj = r.json()
+    temp_k = float(json_obj['main']['temp'])
+    temp_c = temp_k-273.15 # convert to celsius
+    return temp_c
 
 # define a route for a custom endpoint
 @app.route('/api/users', methods=['GET'])
