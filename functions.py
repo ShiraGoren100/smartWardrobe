@@ -203,3 +203,6 @@ def get_closet(user_id, category):
         return data
     except Exception as e:
         print(f"An error occurred: {e}")
+
+def generate(json_obj):
+    return
