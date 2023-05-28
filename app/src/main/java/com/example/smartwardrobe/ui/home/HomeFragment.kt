@@ -11,10 +11,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.smartwardrobe.MainActivity
+import com.example.smartwardrobe.R
 import com.example.smartwardrobe.RetrofitClient
 import com.example.smartwardrobe.data.ClothingItem
 import com.example.smartwardrobe.databinding.FragmentHomeBinding
@@ -48,8 +50,25 @@ class HomeFragment : Fragment() {
 //                Log.d("Location", "Latitude: ${location.latitude}, Longitude: ${location.longitude}")
                 }
             }*/
-            var addressList: List<Address>? = (activity as MainActivity?)?.getLocation()
-            var outfit = getOutfit(addressList)
+
+            (activity as MainActivity?)?.getLocation { addressList ->
+                // Handle the geocoding result here
+                if (addressList != null) {
+                    // Process the address list
+                    Toast.makeText(context, addressList?.get(0)?.locality ?: "non", Toast.LENGTH_LONG).show()
+                    getOutfit(addressList)
+                } else {
+                    // Handle the case when the location or geocoding is not available
+                    val resourceId = R.string.here
+
+                    Toast.makeText(context,resources.getString(resourceId) , Toast.LENGTH_LONG).show()
+                }
+            }
+
+//            var addressList: List<Address>? = (activity as MainActivity?)?.getLocation()
+//            Toast.makeText(context, addressList?.get(0)?.locality ?: "non", Toast.LENGTH_LONG).show()
+//            (activity as MainActivity?)?.getLocation()
+//            var outfit = getOutfit(addressList)
 
         }
 
@@ -62,7 +81,7 @@ class HomeFragment : Fragment() {
 
     private fun getOutfit(addressList: List<Address>?): ArrayList<ClothingItem> {
         var retrofit = RetrofitClient.myApi
-        val queryParameters = mapOf("id" to (activity as MainActivity).userid, "latitude" to addressList!![0], "longitude" to addressList!![1])
+        val queryParameters = mapOf("id" to (activity as MainActivity).userid, "latitude" to addressList!![0].latitude.toString(), "longitude" to addressList!![0].longitude.toString())
 
         GlobalScope.launch(Dispatchers.IO) {
             val response = retrofit.getOutfit(queryParameters as Map<String, String>).execute()

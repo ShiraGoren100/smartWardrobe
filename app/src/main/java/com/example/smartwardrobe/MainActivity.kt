@@ -35,7 +35,7 @@ import androidx.core.content.ContextCompat
 import com.example.smartwardrobe.ui.home.HomeFragment
 import java.util.*
 
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity() {
     companion object {
         const val REQUEST_CODE_LOCATION_PERMISSION = 100
     }
@@ -90,36 +90,31 @@ class MainActivity : AppCompatActivity(){
     }
 
     @SuppressLint("MissingPermission", "SetTextI18n")
-    public fun getLocation(): List<Address>? {
+    public fun getLocation(callback: (List<Address>?) -> Unit) {
         if (checkPermissions()) {
             if (isLocationEnabled()) {
-                var addressList: List<Address>? = null
-
-                mFusedLocationClient.lastLocation.addOnCompleteListener(this) { task ->
+                mFusedLocationClient.lastLocation.addOnCompleteListener { task ->
                     val location: Location? = task.result
                     if (location != null) {
                         val geocoder = Geocoder(this, Locale.getDefault())
-                        addressList = geocoder.getFromLocation(location.latitude, location.longitude, 1)
-                        /* mainBinding.apply {
-     tvLatitude.text = "Latitude\n${list[0].latitude}"
-     tvLongitude.text = "Longitude\n${list[0].longitude}"
-     tvCountryName.text = "Country Name\n${list[0].countryName}"
-     tvLocality.text = "Locality\n${list[0].locality}"
-     tvAddress.text = "Address\n${list[0].getAddressLine(0)}"
- }*/
+                        val addressList = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+                        callback(addressList)
+                    } else {
+                        callback(null)
                     }
                 }
-                return addressList
             } else {
                 Toast.makeText(this, "Please turn on location", Toast.LENGTH_LONG).show()
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 startActivity(intent)
+                callback(null)
             }
         } else {
             requestPermissions()
+            callback(null)
         }
-        return null
     }
+
 
     private fun isLocationEnabled(): Boolean {
         val locationManager: LocationManager =
@@ -163,7 +158,14 @@ class MainActivity : AppCompatActivity(){
     ) {
         if (requestCode == REQUEST_CODE_LOCATION_PERMISSION) {
             if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                getLocation()
+                getLocation { addressList ->
+                    // Handle the geocoding result here
+                    if (addressList != null) {
+                        // Process the address list
+                    } else {
+                        // Handle the case when the location or geocoding is not available
+                    }
+                }
             }
         }
     }
