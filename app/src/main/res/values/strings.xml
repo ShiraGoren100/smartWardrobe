@@ -60,9 +60,11 @@
     <string name="to_register">Don\'t have a user? click</string>
     <string name="here">here</string>
     <string name="new_outfit">Generate a new outfit</string>
+    <string name="user">User</string>
+    <string name="logout">Logout</string>
 
 
-<!--    <string name="try_again">Try again later</string>-->
+    <!--    <string name="try_again">Try again later</string>-->
 
 
 </resources>
