@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.smartwardrobe.R
@@ -19,7 +20,8 @@ import com.example.smartwardrobe.data.Property
 import com.squareup.picasso.Picasso
 
 
-class ClothingAdapter(private val items: List<ClothingItem>) : RecyclerView.Adapter<ClothingAdapter.ViewHolder>() {
+class ClothingAdapter : RecyclerView.Adapter<ClothingAdapter.ViewHolder>() {
+    private var items: List<ClothingItem> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_clothing, parent, false)
@@ -27,35 +29,64 @@ class ClothingAdapter(private val items: List<ClothingItem>) : RecyclerView.Adap
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
         val item = items[position]
-        holder.bind(item)
+        holder.textView.text = item.id.toString()
+//        val base64Image: String = "your_base64_image_here"
+        val decodedBytes: ByteArray = Base64.decode(item.img, Base64.DEFAULT)
+        val bitmap: Bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+        holder.imageView.setImageBitmap(bitmap)
+
+        val propertyStringBuilder = StringBuilder()
+        for (property in item.properties) {
+            propertyStringBuilder.append(property.title+": "+property.value).append("\n")
+        }
+        val propertiesText = propertyStringBuilder.toString()
+
+        holder.propertiesView.text = propertiesText
+//        Picasso.get().load(item.img).into(holder.imageView)
+//        holder.bind(item)
     }
 
     override fun getItemCount(): Int {
         return items.size
     }
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val imageView: ImageView = itemView.findViewById(R.id.imageView)
-        private val propertiesView: LinearLayout = itemView.findViewById(R.id.clothes)
+    fun updateData(newItems: List<ClothingItem>) {
+        val diffResult = DiffUtil.calculateDiff(
+            ClothingItemDiffCallback(items, newItems)
+        )
+        items = newItems
+        diffResult.dispatchUpdatesTo(this)
+    }
 
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val imageView: ImageView = itemView.findViewById(R.id.img_view)
+
+        val propertiesView: TextView = itemView.findViewById(R.id.properties)
+        val textView: TextView = itemView.findViewById(R.id.item_id)
+
+/*
         fun bind(item: ClothingItem) {
             // Load the image using a library like Picasso or Glide
-            Picasso.get().load(item.img).into(imageView)
-
+//            Picasso.get().load(item.img).into(imageView)
+            textView.text = item.id.toString()
             // Set the properties
-            propertiesView.removeAllViews()
-            for (property in item.properties) {
-                val propertyView = LayoutInflater.from(itemView.context).inflate(R.layout.item_property, null)
-                val titleView: TextView = propertyView.findViewById(R.id.titleView)
-                val valueView: TextView = propertyView.findViewById(R.id.valueView)
+//            propertiesView.removeAllViews()
+            */
+/*  for (property in item.properties) {
+                  val propertyView = LayoutInflater.from(itemView.context).inflate(R.layout.item_property, null)
+                  val titleView: TextView = propertyView.findViewById(R.id.titleView)
+                  val valueView: TextView = propertyView.findViewById(R.id.valueView)
 
-                titleView.text = property.title
-                valueView.text = property.value
+                  titleView.text = property.title
+                  valueView.text = property.value
 
-                propertiesView.addView(propertyView)
-            }
+                  propertiesView.addView(propertyView)
+              }*//*
+
         }
+*/
     }
 }
 

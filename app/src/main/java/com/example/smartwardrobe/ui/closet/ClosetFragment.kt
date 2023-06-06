@@ -1,5 +1,6 @@
 package com.example.smartwardrobe.ui.closet
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.widget.ArrayAdapter
 
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.smartwardrobe.MainActivity
 
@@ -24,6 +26,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
+import okhttp3.internal.notify
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -38,9 +41,11 @@ class ClosetFragment : Fragment() {
     private lateinit var items: ArrayList<ClothingItem>
     private lateinit var itemsAdapter: ClothingAdapter
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
+
         savedInstanceState: Bundle?
     ): View {
         val closetViewModel =
@@ -50,9 +55,10 @@ class ClosetFragment : Fragment() {
         val root: View = binding.root
 
         items = ArrayList<ClothingItem>()
-//        binding.clothes.layoutManager = LinearLayoutManager(activity)
-        itemsAdapter = ClothingAdapter(items)
 
+        binding.clothes.layoutManager = LinearLayoutManager(activity)
+        itemsAdapter = ClothingAdapter()
+        binding.clothes.adapter = itemsAdapter
         val categoryInput = binding.tvCategory
         val categories = resources.getStringArray(R.array.categories)
         val categoryAdapter = context?.let { ArrayAdapter(it, android.R.layout.simple_list_item_1, categories) }
@@ -70,12 +76,23 @@ class ClosetFragment : Fragment() {
                 resources.getIdentifier(arrayName, "array", requireActivity().packageName)
             )
             items.clear()
-            items = getList("$category")!!
-//            if (items.isEmpty()) {
-//
-//            } else {
-//
-//            }
+
+            lifecycleScope.launch {
+                val clothingItemList = getList("$category")
+
+                // Handle the returned clothingItemList
+                if (clothingItemList != null) {
+                    items=clothingItemList
+                    itemsAdapter.notifyDataSetChanged()
+                    val newItems: List<ClothingItem> = items
+                    itemsAdapter.updateData(newItems)
+                    // The API call was successful, process the list of clothing items
+                    // e.g., Update UI, populate RecyclerView, etc.
+                } else {
+                    // There was an error or the response was not successful
+                    // Handle the error case
+                }
+            }
 
         }
 
@@ -86,22 +103,27 @@ class ClosetFragment : Fragment() {
         return root
     }
 
-    private fun getList(category: String): ArrayList<ClothingItem>? {
+    private suspend fun getList(category: String): ArrayList<ClothingItem>? {
         var retrofit = RetrofitClient.myApi
         val queryParameters = mapOf("id" to (activity as MainActivity).userid, "category" to category)
 
-        GlobalScope.launch(Dispatchers.IO) {
-            val response = retrofit.getCloset(queryParameters).execute()
-            withContext(Dispatchers.Main) {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = retrofit.getCloset(queryParameters).execute()
                 if (response.isSuccessful) {
-                    val data = response.body()
-                    // Do something with the data
+                    val lst = response.body()
+                    lst as ArrayList<ClothingItem> // Cast the response to ArrayList<ClothingItem>
                 } else {
-                    // Handle error
+                    null // Return null or handle the error case appropriately
                 }
+            } catch (e: Exception) {
+                print(e)
+                null // Return null or handle the exception case appropriately
             }
         }
-        return ArrayList<ClothingItem>()
+
+
+        itemsAdapter.notifyDataSetChanged()
     }
 
 /*

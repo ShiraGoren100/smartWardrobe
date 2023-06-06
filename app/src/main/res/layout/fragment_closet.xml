@@ -28,7 +28,9 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <LinearLayout
+
+
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/clothes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,4 +38,6 @@
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/category_input" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

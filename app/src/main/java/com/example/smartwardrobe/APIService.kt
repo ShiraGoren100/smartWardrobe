@@ -23,7 +23,7 @@ interface APIService {
     fun getUsers(): Call<List<LoggedInUser>>
 
     @GET("/closet")
-    fun getCloset(@QueryMap params: Map<String, String>): Call<ArrayList<ClothingItem>>
+    fun getCloset(@QueryMap params: Map<String, String>): Call<List<ClothingItem>>
 
     @GET("/outfit")
     fun getOutfit(@QueryMap params: Map<String, String>): Call<ArrayList<ClothingItem>>
