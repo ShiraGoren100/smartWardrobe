@@ -5,3 +5,5 @@ INSERT INTO categories (type)
 VALUES ('Coats'), ('Sweaters'), ('Dresses'), ('Shirts'), ('Pants'), ('Skirts'), ('Footwear');
 INSERT INTO tags (tag_name)
 VALUES ('Sleeves'), ('Thickness'), ('Length'), ('Weather');
+
+//change outfit table- add user_id and last_used columns, remove accessories column
