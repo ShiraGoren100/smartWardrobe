@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask, jsonify, request, render_template
 import requests
 import functions
@@ -9,18 +11,28 @@ class LoggedInUser:
     """
     user object
     """
+
     def __init__(self, userId, displayName):
         self.userId = userId
         self.displayName = displayName
+
 
 class clothingList:
     """
     each user has a list of items that belong to the same category.
     The list consists of all data on item.
     """
-    def __init__(self,userId, category, list):
-        self.userId = userId
-        self.category = category
+
+    def __init__(self, list):
+        # self.userId = userId
+        # self.category = category
+        self.list = list
+
+
+class clothing_item:
+    def __int__(self, id, picture, list):
+        self.id = id
+        self.picture = picture
         self.list = list
 
 
@@ -65,7 +77,6 @@ def register():
     return jsonify(user.__dict__)
 
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     email = request.json.get('email')
@@ -90,14 +101,27 @@ def get_closet():
     # Get query parameters from request.args
     userid = request.args.get('id')
     category = request.args.get('category')
-    print(userid+","+category)
+    print(userid + "," + category)
     # Perform operations using userid and category
     data = functions.get_closet(userid, category)
-
+    list = []
+    for i in data:
+        properties = functions.get_item_property(i[0])
+        title_value_list = []
+        # tup = property['properties']
+        for prop in properties:
+            title = prop[0]
+            value = prop[1]
+            title_value_list.append({'title': title, 'value': value})
+        item={"id":i[0], "img":i[1],"properties": title_value_list}
+        # item={"id":i[0], "img":i[1]}
+        list.append(item)
     # Return response as JSON
-    cList = clothingList(userid,category,data)
+    cList = clothingList( list)
     # return jsonify(closet_items)
-    return jsonify(cList.__dict__)
+    # ret={'list':list}
+    return jsonify(list)
+
 
 @app.route('/outfit')
 def get_outfit():
@@ -107,6 +131,12 @@ def get_outfit():
     longitude = request.args.get('longitude')
     print(request.args)
     return jsonify(None)
+
+@app.route('/deleteItem', methods=['POST'])
+def deleteItem():
+    item_id = request.args.get('id')
+    return {'result': 'success'}
+
 
 
 if __name__ == '__main__':
