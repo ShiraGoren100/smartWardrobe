@@ -31,5 +31,8 @@ interface APIService {
     @POST("/addItem")
     fun addItem(@Query("id") userid: String, @Body json: RequestBody): Call<ResponseBody>
 
+    @DELETE("/deleteItem")
+    suspend fun deleteItem(@Query("id") id: Int): Response<Unit>
+
 
 }

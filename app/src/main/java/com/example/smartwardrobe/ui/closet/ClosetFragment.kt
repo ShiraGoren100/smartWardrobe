@@ -20,6 +20,7 @@ import com.example.smartwardrobe.data.ClothingItem
 import com.example.smartwardrobe.data.Property
 import com.example.smartwardrobe.data.model.LoggedInUser
 import com.example.smartwardrobe.databinding.FragmentClosetBinding
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -59,6 +60,17 @@ class ClosetFragment : Fragment() {
         binding.clothes.layoutManager = LinearLayoutManager(activity)
         itemsAdapter = ClothingAdapter()
         binding.clothes.adapter = itemsAdapter
+
+        itemsAdapter.setOnDeleteClickListener { position ->
+
+            val deletedItem = items[position]
+            Snackbar.make(binding.clothes, deletedItem.id.toString(), Snackbar.LENGTH_LONG)
+            deleteFromDB(deletedItem.id)
+            items.removeAt(position)
+
+            itemsAdapter.notifyItemRemoved(position)
+        }
+
         val categoryInput = binding.tvCategory
         val categories = resources.getStringArray(R.array.categories)
         val categoryAdapter = context?.let { ArrayAdapter(it, android.R.layout.simple_list_item_1, categories) }
@@ -82,7 +94,7 @@ class ClosetFragment : Fragment() {
 
                 // Handle the returned clothingItemList
                 if (clothingItemList != null) {
-                    items=clothingItemList
+                    items = clothingItemList
                     itemsAdapter.notifyDataSetChanged()
                     val newItems: List<ClothingItem> = items
                     itemsAdapter.updateData(newItems)
@@ -103,6 +115,25 @@ class ClosetFragment : Fragment() {
         return root
     }
 
+    private fun deleteFromDB(id: Int) {
+        var retrofit = RetrofitClient.myApi
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val response = retrofit.deleteItem(id)
+                if (response.isSuccessful) {
+                    // Item deleted successfully
+                    // Handle any necessary operations after deletion
+                } else {
+                    // Handle error response
+                    val errorBody = response.errorBody()
+                    // Process error body if needed
+                }
+            } catch (e: Exception) {
+                // Handle exception
+            }
+        }
+    }
+
     private suspend fun getList(category: String): ArrayList<ClothingItem>? {
         var retrofit = RetrofitClient.myApi
         val queryParameters = mapOf("id" to (activity as MainActivity).userid, "category" to category)
@@ -121,8 +152,6 @@ class ClosetFragment : Fragment() {
                 null // Return null or handle the exception case appropriately
             }
         }
-
-
         itemsAdapter.notifyDataSetChanged()
     }
 

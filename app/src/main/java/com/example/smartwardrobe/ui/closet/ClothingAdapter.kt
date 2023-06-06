@@ -17,11 +17,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.smartwardrobe.R
 import com.example.smartwardrobe.data.ClothingItem
 import com.example.smartwardrobe.data.Property
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.squareup.picasso.Picasso
 
 
 class ClothingAdapter : RecyclerView.Adapter<ClothingAdapter.ViewHolder>() {
     private var items: List<ClothingItem> = emptyList()
+    private var onDeleteClickListener: ((position: Int) -> Unit)? = null
+
+    fun setOnDeleteClickListener(listener: (position: Int) -> Unit) {
+        onDeleteClickListener = listener
+    }
+
+    // onClickListener Interface
+    interface OnClickListener {
+        fun onClick(position: Int, model: ClothingItem)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_clothing, parent, false)
@@ -39,11 +50,13 @@ class ClothingAdapter : RecyclerView.Adapter<ClothingAdapter.ViewHolder>() {
 
         val propertyStringBuilder = StringBuilder()
         for (property in item.properties) {
-            propertyStringBuilder.append(property.title+": "+property.value).append("\n")
+            propertyStringBuilder.append(property.title + ": " + property.value).append("\n")
         }
         val propertiesText = propertyStringBuilder.toString()
 
         holder.propertiesView.text = propertiesText
+
+
 //        Picasso.get().load(item.img).into(holder.imageView)
 //        holder.bind(item)
     }
@@ -60,12 +73,20 @@ class ClothingAdapter : RecyclerView.Adapter<ClothingAdapter.ViewHolder>() {
         diffResult.dispatchUpdatesTo(this)
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imageView: ImageView = itemView.findViewById(R.id.img_view)
 
         val propertiesView: TextView = itemView.findViewById(R.id.properties)
         val textView: TextView = itemView.findViewById(R.id.item_id)
-
+        val delBtn: FloatingActionButton = itemView.findViewById(R.id.btn_del)
+        init {
+            itemView.findViewById<FloatingActionButton>(R.id.btn_del).setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    onDeleteClickListener?.invoke(position)
+                }
+            }
+        }
 /*
         fun bind(item: ClothingItem) {
             // Load the image using a library like Picasso or Glide
