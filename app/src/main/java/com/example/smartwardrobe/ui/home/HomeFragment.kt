@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.location.Address
 import android.location.LocationManager
 import android.location.LocationManager.*
+import android.opengl.Visibility
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +21,7 @@ import com.example.smartwardrobe.R
 import com.example.smartwardrobe.RetrofitClient
 import com.example.smartwardrobe.data.ClothingItem
 import com.example.smartwardrobe.databinding.FragmentHomeBinding
+import com.example.smartwardrobe.ui.closet.ClothingAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -29,6 +31,9 @@ class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private lateinit var locationManager: LocationManager
+    private lateinit var outfit: ArrayList<ClothingItem>
+    private lateinit var itemsAdapter: ClothingAdapter
+
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -40,8 +45,11 @@ class HomeFragment : Fragment() {
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
+        binding.btnRegenerate.visibility= View.GONE
         locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
+        outfit = ArrayList<ClothingItem>()
+        itemsAdapter = ClothingAdapter()
+        binding.outfit.adapter = itemsAdapter
         binding.btnNewOutfit.setOnClickListener {
             /*if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 val location: Location? = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
@@ -56,12 +64,18 @@ class HomeFragment : Fragment() {
                 if (addressList != null) {
                     // Process the address list
                     Toast.makeText(context, addressList?.get(0)?.locality ?: "non", Toast.LENGTH_LONG).show()
-                    getOutfit(addressList)
+                    outfit = getOutfit(addressList)
+//                    itemsAdapter.notifyDataSetChanged()
+                    val newItems: List<ClothingItem> = outfit
+                    itemsAdapter.updateData(newItems)
+                    binding.btnRegenerate.visibility= View.VISIBLE
                 } else {
                     // Handle the case when the location or geocoding is not available
                     val resourceId = R.string.here
 
-                    Toast.makeText(context,resources.getString(resourceId) , Toast.LENGTH_LONG).show()
+//                    Toast.makeText(context,resources.getString(resourceId) , Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, addressList?.get(0)?.locality ?: "non", Toast.LENGTH_LONG).show()
+
                 }
             }
 
@@ -72,10 +86,7 @@ class HomeFragment : Fragment() {
 
         }
 
-        val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
+
         return root
     }
 
