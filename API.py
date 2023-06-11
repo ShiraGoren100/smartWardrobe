@@ -113,11 +113,11 @@ def get_closet():
             title = prop[0]
             value = prop[1]
             title_value_list.append({'title': title, 'value': value})
-        item={"id":i[0], "img":i[1],"properties": title_value_list}
+        item = {"id": i[0], "img": i[1], "properties": title_value_list}
         # item={"id":i[0], "img":i[1]}
         list.append(item)
     # Return response as JSON
-    cList = clothingList( list)
+    cList = clothingList(list)
     # return jsonify(closet_items)
     # ret={'list':list}
     return jsonify(list)
@@ -132,11 +132,24 @@ def get_outfit():
     print(request.args)
     return jsonify(None)
 
+
 @app.route('/deleteItem', methods=['POST'])
 def deleteItem():
+    # todo: delete item by id
     item_id = request.args.get('id')
     return {'result': 'success'}
 
+
+@app.route('/rateOutfit', methods=['POST'])
+def rateOutfit():
+    # todo:add rating to outfit
+    userid = request.args.get('id')
+    outfitid = request.args.get('outfitID')
+    rating = request.args.get('rating')
+    option = request.args.get('option')
+    print(userid)
+    functions.rate_outfit(userid, outfitid, rating, option)
+    return {'result': 'success'}
 
 
 if __name__ == '__main__':
