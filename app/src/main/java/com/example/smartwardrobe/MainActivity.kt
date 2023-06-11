@@ -61,8 +61,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.appBarMain.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+            /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show()*/
             val intent = Intent(this, AddItemActivity::class.java)
             startActivity(intent)
         }

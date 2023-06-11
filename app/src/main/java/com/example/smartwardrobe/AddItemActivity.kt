@@ -34,6 +34,7 @@ class AddItemActivity : AppCompatActivity(),RepositoryCallback  {
         binding = ActivityAddItemBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setSupportActionBar(binding.toolbar)
 
         //take a pictur
         imageView = binding.imgView

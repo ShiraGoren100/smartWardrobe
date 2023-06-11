@@ -34,5 +34,7 @@ interface APIService {
     @DELETE("/deleteItem")
     suspend fun deleteItem(@Query("id") id: Int): Response<Unit>
 
+    @POST("/rateOutfit")
+    fun rateOutfit(@QueryMap params: Map<String, String>): Response<Unit>
 
 }

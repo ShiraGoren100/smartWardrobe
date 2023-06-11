@@ -1,7 +1,9 @@
 package com.example.smartwardrobe.ui.home
 
 import android.Manifest
+
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Address
 import android.location.LocationManager
@@ -21,6 +23,7 @@ import com.example.smartwardrobe.R
 import com.example.smartwardrobe.RetrofitClient
 import com.example.smartwardrobe.data.ClothingItem
 import com.example.smartwardrobe.databinding.FragmentHomeBinding
+import com.example.smartwardrobe.rate.RateActivity
 import com.example.smartwardrobe.ui.closet.ClothingAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -45,11 +48,21 @@ class HomeFragment : Fragment() {
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
-        binding.btnRegenerate.visibility= View.GONE
+        binding.btnRegenerate.visibility = View.GONE
         locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         outfit = ArrayList<ClothingItem>()
         itemsAdapter = ClothingAdapter()
         binding.outfit.adapter = itemsAdapter
+
+        //remove this:
+        binding.btnRate.setOnClickListener {
+            val intent = Intent(activity, RateActivity::class.java)
+            val extraData = "5"//outfit id
+//            intent.putExtra("outfit_id", extraData)
+
+            startActivity(intent)
+        }
+
         binding.btnNewOutfit.setOnClickListener {
             /*if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 val location: Location? = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
@@ -68,7 +81,16 @@ class HomeFragment : Fragment() {
 //                    itemsAdapter.notifyDataSetChanged()
                     val newItems: List<ClothingItem> = outfit
                     itemsAdapter.updateData(newItems)
-                    binding.btnRegenerate.visibility= View.VISIBLE
+//                    binding.btnRegenerate.visibility = View.VISIBLE
+                    binding.btnNewOutfit.text= getString(R.string.regenerate_outfit)
+                    binding.btnRate.visibility = View.VISIBLE
+                    binding.btnRate.setOnClickListener {
+                        val intent = Intent(activity, RateActivity::class.java)
+                        val extraData = "5"//outfit id
+                        intent.putExtra("outfit_id", extraData)
+                        intent.putExtra("user_id", (activity as MainActivity).userid)
+                        startActivity(intent)
+                    }
                 } else {
                     // Handle the case when the location or geocoding is not available
                     val resourceId = R.string.here

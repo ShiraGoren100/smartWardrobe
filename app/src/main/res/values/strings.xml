@@ -62,6 +62,16 @@
     <string name="new_outfit">Generate a new outfit</string>
     <string name="user">User</string>
     <string name="logout">Logout</string>
+    <string name="title_activity_rate">RateActivity</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="too_cold">too cold</string>
+    <string name="perfect_for_weather">perfect for weather</string>
+    <string name="too_hot">too hot</string>
+    <string name="submit">Submit</string>
+    <string name="regenerate_outfit">Regenerate outfit</string>
+    <string name="rate">Rate</string>
 
 
     <!--    <string name="try_again">Try again later</string>-->
