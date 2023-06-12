@@ -31,10 +31,26 @@ closed_Shoes = 0
 rain = 0
 cover_up = 0
 
-cool_threshold = 18
-warm_threshold = 24
-cold_threshold = 14
+# cool_threshold = 18
+# warm_threshold = 24
+# cold_threshold = 14
 wear_again_range = 14
+
+def get_users_thresholds(user_id):
+    try:
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="smatrwardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
+                                     port=3307)
+        cursordb = db.cursor()
+
+        # get all clothing items that are classified as summer.
+        cursordb.execute("SELECT hot, warm, cool FROM user WHERE user_id = %s;", [user_id])
+        data = cursordb.fetchall()
+        cursordb.close()
+        db.close()
+        return data
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 
 def chooseOutfitType(options):
@@ -56,18 +72,18 @@ def getWeather(json_obj):
     """
     temp_k = float(json_obj['main']['temp'])
     temp_c = temp_k - 273.15  # convert to celsius
-    if temp_c < 0:
-        need_coat = 1
-        closed_shoes = 1
-        cover_up = 1
-    if cool_threshold < temp_c < warm_threshold:
-        need_jacket = 1
-        cover_up = 1
-        closed_shoes = 0
-    else:
-        need_coat = 0
-        closed_shoes = 0
-        cover_up = 0
+    # if temp_c < 0:
+    #     need_coat = 1
+    #     closed_shoes = 1
+    #     cover_up = 1
+    # if cool_threshold < temp_c < warm_threshold:
+    #     need_jacket = 1
+    #     cover_up = 1
+    #     closed_shoes = 0
+    # else:
+    #     need_coat = 0
+    #     closed_shoes = 0
+    #     cover_up = 0
     return temp_c
 
 
@@ -527,12 +543,13 @@ def getOutfit(json_obj, user_id):
     """
     temperature = getWeather(json_obj)
 
-    if temperature >= warm_threshold:
+    hot_threshold, warm_threshold, cool_threshold = get_users_thresholds(user_id)
+    if temperature >= hot_threshold:
         outfit_id = summer_outfit(json_obj, user_id)
 
-    elif cool_threshold <= temperature <= warm_threshold:
+    elif warm_threshold <= temperature <= hot_threshold:
         outfit_id = cool_outfit(json_obj, user_id)
-    elif cold_threshold <= temperature <= cool_threshold:
+    elif warm_threshold <= temperature <= cool_threshold:
         outfit_id = colder_outfit(json_obj, user_id)
     else:
         outfit_id = winter_outfit(json_obj, user_id)
