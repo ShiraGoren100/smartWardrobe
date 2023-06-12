@@ -100,6 +100,7 @@ def get_top(type, weather, thickness, sleeves):
        :param weather:
        :return:
        """
+    random_type = random.choice(type)
     random_weather = random.choice(weather)
     random_thickness = random.choice(thickness)
     random_sleeves = random.choice(sleeves)
@@ -122,7 +123,7 @@ def get_top(type, weather, thickness, sleeves):
             "AND tci.tag_value = %s"
             "AND t.tag_name = 'sleeves'  "
             "AND tci.tag_value = %s"
-            , [type, random_weather, random_thickness, random_sleeves])
+            , [random_type, random_weather, random_thickness, random_sleeves])
         data = cursordb.fetchall()
         cursordb.close()
         db.close()
@@ -142,7 +143,7 @@ def get_bottom(type, weather, thickness, length):
     :param weather:
     :return:
     """
-
+    random_type = random.choice(type)
     random_weather = random.choice(weather)
     random_thickness = random.choice(thickness)
     random_length = random.choice(length)
@@ -164,7 +165,7 @@ def get_bottom(type, weather, thickness, length):
             "AND tci.tag_value = %s"
             "AND t.tag_name = 'length'  "
             "AND tci.tag_value = %s"
-            , [type, random_weather, random_thickness, random_length])
+            , [random_type, random_weather, random_thickness, random_length])
         data = cursordb.fetchall()
         cursordb.close()
         db.close()
@@ -185,6 +186,7 @@ def get_dress(type, weather, thickness, sleeves, length):
     :param weather:
     :return:
     """
+    random_type = random.choice(type)
     random_weather = random.choice(weather)
     random_thickness = random.choice(thickness)
     random_sleeves = random.choice(sleeves)
@@ -209,7 +211,7 @@ def get_dress(type, weather, thickness, sleeves, length):
             "AND tci.tag_value = %s"
             "AND t.tag_name = 'length'  "
             "AND tci.tag_value = %s"
-            , [type, random_weather, random_thickness, random_sleeves, random_length])
+            , [random_type, random_weather, random_thickness, random_sleeves, random_length])
         data = cursordb.fetchall()
         cursordb.close()
         db.close()
@@ -338,13 +340,13 @@ def summer_outfit(json_obj, user_id):
         while top == [] or bottom == []:
             clothing_type = chooseOutfitType(json_obj)
             if clothing_type != "dress":
-                top = get_top("shirt", ["hot"], ["light"], ["sleeveless", "short sleeves"])
-                bottom = get_bottom(clothing_type, ["hot"], ["light"], ["short", "knee length"])
+                top = get_top(["shirt"], ["hot"], ["light"], ["sleeveless", "short sleeves"])
+                bottom = get_bottom([clothing_type], ["hot"], ["light"], ["short", "knee length"])
 
             else:
-                top = get_dress(clothing_type, ["hot"], ["light"], ["sort", "sleeveless"], ["short", "knee length"])
+                top = get_dress([clothing_type], ["hot"], ["light"], ["short sleeves", "sleeveless"], ["short", "knee length"])
                 bottom = [None]
-        shoes = get_random_item("Footwear", ["hot"])
+        shoes = get_random_item(["Footwear"], ["hot"])
         outwear = None
         check = checkOutfit(user_id, top[0], bottom[0], shoes[0])
         if check == []:
@@ -357,24 +359,77 @@ def summer_outfit(json_obj, user_id):
         else:
             return check[1]
 
+def is_type_sleeves(top_id, sleeve_type):
+    try:
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="smatrwardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
+                                     port=3307)
+        cursordb = db.cursor()
 
-# todo:
-def cool_outfit(json_obj):
+        cursordb.execute(
+            "SELECT ci.id, ci.picture, ci.user_id, ci.category "
+            "FROM clothing_item ci JOIN categories c ON ci.category = c.id "
+            "JOIN tags_clothing_item tci ON tci.clothing_item_id = ci.id "
+            "JOIN tags t ON t.id = tci.tag_id WHERE "
+            "t.tag_name ='sleeves'"
+            "AND tci.tag_value = %s", [sleeve_type])
+        data = cursordb.fetchall()
+        cursordb.close()
+        db.close()
+        if data == []:
+            return False
+        return True
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+
+def cool_outfit(json_obj, user_id):
     """
     either summer outfit with long sleeves- or short sleeves and a jacket
     :return: outfit id
     """
+    date = datetime.now().date()
+    again = 1
+    while again == 1:
+        top = []
+        bottom = []
+        while top == [] or bottom == []:
+            clothing_type = chooseOutfitType(json_obj)
+            if clothing_type != "dress":
+                top = get_top("shirt", ["hot", "warm"], ["light", "medium"], ["short sleeves"])
+                bottom = get_bottom([clothing_type], ["hot", "warm"], ["light", "medium"], ["knee length", "long"])
+
+            else:
+                top = get_dress([clothing_type], ["hot", "warm"], ["light", "medium"], ["short sleeves", "long"], ["knee length", "long"])
+                bottom = [None]
+        shoes = get_random_item("Footwear", ["hot", "warm"])
+        if is_type_sleeves(top[0], "short sleeves"):
+            outwear = get_random_item("outwear", "warm")
+            if outwear == []:
+                outwear = [None]
+        else:
+            outwear = [None]
+        check = checkOutfit(user_id, top[0], bottom[0], shoes[0])
+        if check == []:
+            add_outfit(user_id, top[0], bottom[0], outwear[0], shoes[0])
+            check = checkOutfit(user_id, top[0], bottom[0], shoes[0])
+            return check[0][1]
+
+        elif (check[0][0] - date).days < wear_again_range:
+            again = 1
+        else:
+            return check[1]
 
     pass
 
 
 # todo:
-def colder_outfit():
+def colder_outfit(json_obj, user_id):
     pass
 
 
 # todo:
-def winter_outfit():
+def winter_outfit(json_obj, user_id):
     pass
 
 
@@ -392,11 +447,11 @@ def getOutfit(json_obj, user_id):
         outfit_id = summer_outfit(json_obj, user_id)
 
     elif cool_threshold <= temperature <= warm_threshold:
-        outfit_id = cool_outfit()
+        outfit_id = cool_outfit(json_obj, user_id)
     elif cold_threshold <= temperature <= cool_threshold:
-        outfit_id = colder_outfit()
+        outfit_id = colder_outfit(json_obj, user_id)
     else:
-        outfit_id = winter_outfit()
+        outfit_id = winter_outfit(json_obj, user_id)
     return get_outfit_by_id(outfit_id)
 
 
