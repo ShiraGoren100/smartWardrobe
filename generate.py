@@ -53,7 +53,7 @@ def chooseOutfitType(options):
         # db.close()
     # except Exception as e:
     #     print(f"An error occurred: {e}")
-    options = ["skirt", "pants", "dress"]
+    options = ["skirts", "pants"]
     random_choice = random.choice(options)#need to change based on answer from db based on how many options we have.
     return random_choice
 
@@ -122,10 +122,12 @@ def get_random_item(type, weather):
             "JOIN tags_clothing_item tci ON tci.clothing_item_id = ci.id "
             "JOIN tags t ON t.id = tci.tag_id WHERE c.type= %s"
             "AND t.tag_name = 'weather'  "
-            "AND tci.tag_value = 'summer'", type)
+            "AND tci.tag_value = 'summer'", [type])
         data = cursordb.fetchall()
         cursordb.close()
         db.close()
+        if data == []:
+            return data
         random_choice = random.choice(data)
         return random_choice
     except Exception as e:
@@ -142,15 +144,18 @@ def add_outfit(user_id, top, bottom, outwear, shoes):
     :return:
     """
     date = datetime.now()
+    date_string = date.strftime("%Y-%m-%d")
     try:
 
         # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="smatrwardrobe")
         db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
                                      port=3307)
         cursordb = db.cursor()
-        sql = "INSERT INTO outfits (top, bottom, outwear, shoes, last_used, user_id) VALUES (%d, %d, %d, %d, %s, %d)"
-        val = (top, bottom, outwear,shoes,date,user_id)
+        sql = "INSERT INTO outfits (top, bottom, outwear, shoes, last_used, user_id) VALUES (%s, %s, %s, %s, %s, %s)"
+        val = (top, bottom,outwear, shoes,date_string,user_id)
         cursordb.execute(sql, val)
+        db.commit()
+        cursordb.close()
         db.close()
     except Exception as e:
         print(f"An error occurred: {e}")
@@ -165,18 +170,20 @@ def summer_outfit(json_obj, user_id):
 
     :return:
     """
-    type = chooseOutfitType(json_obj)
-    if type is not "dress":
-        top = get_random_item("shirt", "summer")
-        bottom = get_random_item(type, "summer")
-    else:
-        top = get_random_item(type, "summer")
-        bottom = None
-    shoes = get_random_item("footware", "summer")
+    top = []
+    bottom = []
 
+    while top == [] or bottom == []:
+        clothing_type = chooseOutfitType(json_obj)
+        if clothing_type != "dress":
+            top = get_random_item("shirts", "summer")
+            bottom = get_random_item(clothing_type, "summer")
+
+        else:
+            top = get_random_item(clothing_type, "summer")
+            bottom = [None]
+    shoes = get_random_item("Footwear", "summer")
     outwear = None
-    accessories = None
-    # todo: get the id of each item and give to this function
     add_outfit(user_id, top[0], bottom[0], outwear, shoes[0])
 
     #todo: return the outfit pictures to client
@@ -211,13 +218,34 @@ def getOutfit(json_obj, user_id):
     temperature = getWeather(json_obj)
 
     if temperature >= warm_threshold:
-       summer_outfit()
+       outfit = summer_outfit(json_obj, user_id)
 
     elif cool_threshold <= temperature <= warm_threshold:
-        cool_outfit()
+        outfit = cool_outfit()
     elif cold_threshold <= temperature <= cool_threshold:
-        colder_outfit()
+        outfit = colder_outfit()
     else:
-        winter_outfit()
+        outfit = winter_outfit()
+    return outfit
 
 
+from flask import Flask, jsonify, request, render_template
+import requests
+import functions
+
+def temperature():
+    longitude = "34"
+    latitude = "32"
+    r = requests.get(
+        'https://api.openweathermap.org/data/2.5/weather?lat=' + latitude + '.34&lon=' + longitude + '.99&appid=8f3241a0140c7cbf04fd85bcb7b1cef9')
+    json_obj = r.json()
+    # generate outfit
+    outfit = getOutfit(json_obj, 1)
+    print(outfit)
+    temp_k = float(json_obj['main']['temp'])
+    temp_c = temp_k - 273.15  # convert to celsius
+    return temp_c
+
+
+if __name__ == '__main__':
+    temperature()
