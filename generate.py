@@ -31,6 +31,7 @@ cover_up = 0
 cool_threshold=18
 warm_threshold=24
 cold_threshold=14
+wear_again_range = 14
 
 def chooseOutfitType(options):
     """
@@ -162,36 +163,80 @@ def add_outfit(user_id, top, bottom, outwear, shoes):
 
 
 #todo: to make life easier: change whether tags to only 4 options: summer, winter, cool_day(autumn), warm_day(spring)
+def get_outfit_by_id(id):
+    """
+    returns outfit based on outfit id    :param id:
+    :return: all outfit info
+    """
+    try:
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="smatrwardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
+                                     port=3307)
+        cursordb = db.cursor()
+
+        # get all clothing items that are classified as summer.
+        cursordb.execute("SELECT * "
+                         "FROM outfits WHERE id = %s;", ([id]))
+        data = cursordb.fetchall()
+        cursordb.close()
+        db.close()
+        return data
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 
-#todo:
+def checkOutfit(user_id, top, bottom, shoes):
+    try:
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="smatrwardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
+                                     port=3307)
+        cursordb = db.cursor()
+
+        # get all clothing items that are classified as summer.
+        cursordb.execute("SELECT last_used, id "
+                         "FROM outfits WHERE user_id = %s  "
+                         "AND top = %s  AND bottom = %s  "
+                         "AND shoes = %s;", (user_id, top, bottom,  shoes))
+        data = cursordb.fetchall()
+        cursordb.close()
+        db.close()
+        return data
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
 def summer_outfit(json_obj, user_id):
     """
 
-    :return:
+    :return: outfit id
     """
-    top = []
-    bottom = []
 
-    while top == [] or bottom == []:
-        clothing_type = chooseOutfitType(json_obj)
-        if clothing_type != "dress":
-            top = get_random_item("shirts", "summer")
-            bottom = get_random_item(clothing_type, "summer")
+    date = datetime.now().date()
+    again = 1
+    while again == 1:
+        top = []
+        bottom = []
+        while top == [] or bottom == []:
+            clothing_type = chooseOutfitType(json_obj)
+            if clothing_type != "dress":
+                top = get_random_item("shirts", "summer")
+                bottom = get_random_item(clothing_type, "summer")
 
+            else:
+                top = get_random_item(clothing_type, "summer")
+                bottom = [None]
+        shoes = get_random_item("Footwear", "summer")
+        outwear = None
+        check = checkOutfit(user_id, top[0], bottom[0], shoes[0])
+        if check == []:
+            # todo: add outfit when outfit is
+            add_outfit(user_id, top[0], bottom[0], outwear, shoes[0])
+            check = checkOutfit(user_id, top[0], bottom[0], shoes[0])
+            return check[0][1]
+
+        elif (check[0][0] - date).days < wear_again_range:
+             again = 1
         else:
-            top = get_random_item(clothing_type, "summer")
-            bottom = [None]
-    shoes = get_random_item("Footwear", "summer")
-    outwear = None
-    add_outfit(user_id, top[0], bottom[0], outwear, shoes[0])
-
-    #todo: return the outfit pictures to client
-    outfit = []
-    outfit.append(top)
-    outfit.append(bottom)
-    outfit.append(shoes)
-    return outfit
+            return check[1]
 
 
 #todo:
@@ -218,15 +263,15 @@ def getOutfit(json_obj, user_id):
     temperature = getWeather(json_obj)
 
     if temperature >= warm_threshold:
-       outfit = summer_outfit(json_obj, user_id)
+       outfit_id = summer_outfit(json_obj, user_id)
 
     elif cool_threshold <= temperature <= warm_threshold:
-        outfit = cool_outfit()
+        outfit_id = cool_outfit()
     elif cold_threshold <= temperature <= cool_threshold:
-        outfit = colder_outfit()
+        outfit_id = colder_outfit()
     else:
-        outfit = winter_outfit()
-    return outfit
+        outfit_id = winter_outfit()
+    return get_outfit_by_id(outfit_id)
 
 
 from flask import Flask, jsonify, request, render_template
