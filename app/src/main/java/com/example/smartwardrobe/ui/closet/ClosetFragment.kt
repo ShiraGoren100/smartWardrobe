@@ -117,9 +117,23 @@ class ClosetFragment : Fragment() {
 
     private fun deleteFromDB(id: Int) {
         var retrofit = RetrofitClient.myApi
+
+        /*val call = retrofit.deleteItem(id)
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                // handle successful response
+                Snackbar.make(binding.clothes, "id", Snackbar.LENGTH_LONG)
+
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                // handle error
+            }
+        })*/
+
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val response = retrofit.deleteItem(id)
+                val response = retrofit.deleteItem(id).execute()
                 if (response.isSuccessful) {
                     // Item deleted successfully
                     // Handle any necessary operations after deletion
@@ -130,6 +144,7 @@ class ClosetFragment : Fragment() {
                 }
             } catch (e: Exception) {
                 // Handle exception
+                e.printStackTrace()
             }
         }
     }

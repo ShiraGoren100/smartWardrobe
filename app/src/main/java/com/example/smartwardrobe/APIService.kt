@@ -32,7 +32,7 @@ interface APIService {
     fun addItem(@Query("id") userid: String, @Body json: RequestBody): Call<ResponseBody>
 
     @DELETE("/deleteItem")
-    suspend fun deleteItem(@Query("id") id: Int): Response<Unit>
+     fun deleteItem(@Query("id") id: Int): Call<ResponseBody>
 
     @POST("/rateOutfit")
     fun rateOutfit(@QueryMap params: Map<String, String>): Response<Unit>
