@@ -556,6 +556,56 @@ def getOutfit(json_obj, user_id):
     return get_outfit_by_id(outfit_id)
 
 
+def change_threshold(threshold_to_change, val, user_id):
+    # UPDATE user
+    # SET threshold = <new_threshold_value>
+    # WHERE user_id = <your_user_id>;
+    try:
+
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="smatrwardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
+                                     port=3307)
+        cursordb = db.cursor()
+        sql = "UPDATE user SET %s = %s WHERE user_id = %s"
+        val = (threshold_to_change, val, user_id)
+        cursordb.execute(sql, val)
+        db.commit()
+        cursordb.close()
+        db.close()
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+
+def too_hot(hot_threshold, warm_threshold, cool_threshold, temperature, user_id):
+    if temperature >= hot_threshold:
+        pass
+    elif warm_threshold <= temperature < hot_threshold:
+        change_threshold("hot_threshold", hot_threshold - 2, user_id)
+    elif cool_threshold <= temperature < warm_threshold:
+        change_threshold("warm_threshold", warm_threshold - 2, user_id)
+    elif temperature < cool_threshold:
+        change_threshold("cool_threshold", cool_threshold - 2, user_id)
+
+
+def too_cold(hot_threshold, warm_threshold, cool_threshold, user_id):
+    if temperature >= hot_threshold:
+        change_threshold("hot_threshold", hot_threshold + 2, user_id)
+    elif warm_threshold <= temperature < hot_threshold:
+        change_threshold("warm_threshold", warm_threshold + 2, user_id)
+    elif cool_threshold <= temperature < warm_threshold:
+        change_threshold("cool_threshold", cool_threshold + 2, user_id)
+    elif temperature < cool_threshold:
+        pass
+
+
+def change_temp_thresholds(json_obj, user_id, stars, feedback):
+    temperature = getWeather(json_obj)
+    hot_threshold, warm_threshold, cool_threshold = get_users_thresholds(user_id)
+    if feedback == "too hot":
+        too_hot(hot_threshold, warm_threshold, cool_threshold,temperature, user_id)
+    elif feedback == "too cold":
+        too_cold(hot_threshold, warm_threshold, cool_threshold, temperature, user_id)
+
 from flask import Flask, jsonify, request, render_template
 import requests
 import functions
