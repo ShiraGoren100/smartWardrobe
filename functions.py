@@ -8,6 +8,11 @@ db = mysql.connector.connect(host="localhost", user="root", passwd="root", datab
 cursordb = db.cursor()
 
 
+cool_threshold = 18
+warm_threshold = 24
+cold_threshold = 14
+
+
 def insert_new_user(username, password, email):
     """
     create new user and insert into db
@@ -20,8 +25,8 @@ def insert_new_user(username, password, email):
         db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
         #  db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursor = db.cursor()
-        sql = "INSERT INTO user (userName, password, email) VALUES (%s, %s, %s)"
-        val = (username, password, email)
+        sql = "INSERT INTO user (userName, password, email, hot, warm, cool) VALUES (%s, %s, %s)"
+        val = (username, password, email, warm_threshold, cool_threshold, cold_threshold )
         cursor.execute(sql, val)
         db.commit()
         cursor.close()
