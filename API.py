@@ -135,7 +135,6 @@ def get_outfit():
 
 @app.route('/deleteItem', methods=['DELETE'])
 def deleteItem():
-    # todo: delete item by id
     item_id = request.args.get('id')
     functions.delete_item(item_id)
     return {'result': 'success'}
