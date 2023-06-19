@@ -3,6 +3,7 @@ import json
 from flask import Flask, jsonify, request, render_template
 import requests
 import functions
+from generate import temperature, getOutfit
 
 app = Flask(__name__)
 
@@ -42,18 +43,8 @@ def hello_world():
     return 'Hello, World!'
 
 
-# get weather report.
-# @app.route('/temperature')
-# def temperature():
-#     longitude = request.json.get('longitude')
-#     latitude = request.json.get('latitude')
-#     r = requests.get('https://api.openweathermap.org/data/2.5/weather?lat='+latitude+'.34&lon='+longitude+'.99&appid=8f3241a0140c7cbf04fd85bcb7b1cef9')
-#     json_obj = r.json()
-#     #generate outfit
-#     outfit = generate(json_obj)
-#     temp_k = float(json_obj['main']['temp'])
-#     temp_c = temp_k-273.15 # convert to celsius
-#     return temp_c
+
+
 
 # define a route for a custom endpoint
 @app.route('/api/users', methods=['GET'])
@@ -95,6 +86,17 @@ def addItem():
     functions.insert_new_item(data, userid)
     return {'result': 'success'}
 
+def get_item_as_clist(i, list1):
+    properties = functions.get_item_property(i[0])
+    title_value_list = []
+    # tup = property['properties']
+    for prop in properties:
+        title = prop[0]
+        value = prop[1]
+        title_value_list.append({'title': title, 'value': value})
+    item = {"id": i[0], "img": i[1], "properties": title_value_list}
+    # item={"id":i[0], "img":i[1]}
+    list1.append(item)
 
 @app.route('/closet')
 def get_closet():
@@ -104,23 +106,14 @@ def get_closet():
     print(userid + "," + category)
     # Perform operations using userid and category
     data = functions.get_closet(userid, category)
-    list = []
+    list1 = []
     for i in data:
-        properties = functions.get_item_property(i[0])
-        title_value_list = []
-        # tup = property['properties']
-        for prop in properties:
-            title = prop[0]
-            value = prop[1]
-            title_value_list.append({'title': title, 'value': value})
-        item = {"id": i[0], "img": i[1], "properties": title_value_list}
-        # item={"id":i[0], "img":i[1]}
-        list.append(item)
+       get_item_as_clist(i, list1)
     # Return response as JSON
-    cList = clothingList(list)
+    cList = clothingList(list1)
     # return jsonify(closet_items)
     # ret={'list':list}
-    return jsonify(list)
+    return jsonify(list1)
 
 
 @app.route('/outfit')
@@ -129,8 +122,16 @@ def get_outfit():
     userid = request.args.get('id')
     latitude = request.args.get('latitude')
     longitude = request.args.get('longitude')
+    tempJson= temperature()
+    outfit_info = getOutfit(tempJson, userid)
+    list1 = []
+    for i in range(1, 4):
+        get_item_as_clist(outfit_info[0][i], list1)
+        # Return response as JSON
+    cList = clothingList(list1)
+    outfit = {"id": i[0][0], "date": i[0][5], "list_clothing_Items": cList, "user_id": i[0][6]}
     print(request.args)
-    return jsonify(None)
+    return jsonify(outfit)
 
 
 @app.route('/deleteItem', methods=['DELETE'])

@@ -44,7 +44,7 @@ def get_users_thresholds(user_id):
         cursordb = db.cursor()
 
         # get all clothing items that are classified as summer.
-        cursordb.execute("SELECT hot, warm, cool FROM user WHERE user_id = %s;", [user_id])
+        cursordb.execute("SELECT hot, warm, cool FROM user WHERE id = %s;", [user_id])
         data = cursordb.fetchall()
         cursordb.close()
         db.close()
@@ -542,8 +542,10 @@ def getOutfit(json_obj, user_id):
     :return:
     """
     temperature = getWeather(json_obj)
-
-    hot_threshold, warm_threshold, cool_threshold = get_users_thresholds(user_id)
+    user_thresholds = get_users_thresholds(user_id)
+    hot_threshold = int(user_thresholds[0][0])
+    warm_threshold = int(user_thresholds[0][1])
+    cool_threshold = int(user_thresholds[0][2])
     if temperature >= hot_threshold:
         outfit_id = summer_outfit(json_obj, user_id)
 
@@ -626,4 +628,14 @@ def temperature():
 
 
 if __name__ == '__main__':
-    temperature()
+    #temperature()
+    print(get_outfit_by_id(26))
+
+# def temperature():
+#     longitude = request.json.get('longitude')
+#     latitude = request.json.get('latitude')
+#     r = requests.get('https://api.openweathermap.org/data/2.5/weather?lat='+latitude+'.34&lon='+longitude+'.99&appid=8f3241a0140c7cbf04fd85bcb7b1cef9')
+#     json_obj = r.json()
+#     # temp_k = float(json_obj['main']['temp'])
+#     # temp_c = temp_k-273.15 # convert to celsius
+#     return json_obj
