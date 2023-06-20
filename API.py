@@ -129,7 +129,7 @@ def get_outfit():
         get_item_as_clist(outfit_info[0][i], list1)
         # Return response as JSON
     cList = clothingList(list1)
-    outfit = {"id": i[0][0], "date": i[0][5], "list_clothing_Items": cList, "user_id": i[0][6]}
+    outfit = {"outfitId": i[0][0], "date": i[0][5], "list": cList, "userId": i[0][6]}
     print(request.args)
     return jsonify(outfit)
 

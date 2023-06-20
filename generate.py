@@ -34,7 +34,7 @@ cover_up = 0
 # cool_threshold = 18
 # warm_threshold = 24
 # cold_threshold = 14
-wear_again_range = 14
+wear_again_range = 2
 
 def get_users_thresholds(user_id):
     try:
@@ -59,7 +59,7 @@ def chooseOutfitType(options):
     :param options: lost of options of outfit types-dress\skirt\pants ect.
     :return:randomly chosen option
     """
-    options = ["skirts", "pants", "Dresses"]
+    # options = ["skirts", "pants", "Dresses"]
     random_choice = random.choice(options)  # need to change based on answer from db based on how many options we have.
     return random_choice
 
@@ -126,20 +126,26 @@ def get_top(type, weather, thickness, sleeves):
         db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
                                      port=3307)
         cursordb = db.cursor()
-
-        # get all clothing items that are classified as summer.
         cursordb.execute(
             "SELECT ci.id, ci.picture, ci.user_id, ci.category "
-            "FROM clothing_item ci JOIN categories c ON ci.category = c.id "
-            "JOIN tags_clothing_item tci ON tci.clothing_item_id = ci.id "
-            "JOIN tags t ON t.id = tci.tag_id WHERE c.type= %s"
-            "AND t.tag_name = 'weather'  "
-            "AND tci.tag_value = %s"
-            "AND t.tag_name = 'thickness'  "
-            "AND tci.tag_value = %s"
-            "AND t.tag_name = 'sleeves'  "
-            "AND tci.tag_value = %s"
-            , [random_type, random_weather, random_thickness, random_sleeves])
+            "FROM clothing_item ci "
+            "JOIN categories c ON ci.category = c.id "
+            "JOIN tags_clothing_item tci_weather ON tci_weather.clothing_item_id = ci.id "
+            "JOIN tags_clothing_item tci_sleeves ON tci_sleeves.clothing_item_id = ci.id "
+            "JOIN tags_clothing_item tci_thickness ON tci_thickness.clothing_item_id = ci.id "
+            "JOIN tags t_weather ON t_weather.id = tci_weather.tag_id "
+            "JOIN tags t_sleeves ON t_sleeves.id = tci_sleeves.tag_id "
+            "JOIN tags t_thickness ON t_thickness.id = tci_thickness.tag_id "
+            "WHERE c.type = %s "
+            "AND t_weather.tag_name = 'weather' AND tci_weather.tag_value = %s "
+            "AND t_sleeves.tag_name = 'sleeves' AND tci_sleeves.tag_value = %s "
+            "AND t_thickness.tag_name = 'thickness' AND tci_thickness.tag_value = %s;"
+   ,
+            [random_type, random_weather, random_sleeves, random_thickness]
+        )
+
+
+
         data = cursordb.fetchall()
         cursordb.close()
         db.close()
@@ -172,16 +178,19 @@ def get_bottom(type, weather, thickness, length):
         # get all clothing items that are classified as summer.
         cursordb.execute(
             "SELECT ci.id, ci.picture, ci.user_id, ci.category "
-            "FROM clothing_item ci JOIN categories c ON ci.category = c.id "
-            "JOIN tags_clothing_item tci ON tci.clothing_item_id = ci.id "
-            "JOIN tags t ON t.id = tci.tag_id WHERE c.type= %s"
-            "AND t.tag_name = 'weather'  "
-            "AND tci.tag_value = %s"
-            "AND t.tag_name = 'thickness'  "
-            "AND tci.tag_value = %s"
-            "AND t.tag_name = 'length'  "
-            "AND tci.tag_value = %s"
-            , [random_type, random_weather, random_thickness, random_length])
+            "FROM clothing_item ci "
+            "JOIN categories c ON ci.category = c.id "
+            "JOIN tags_clothing_item tci_weather ON tci_weather.clothing_item_id = ci.id "
+            "JOIN tags_clothing_item tci_length ON tci_length.clothing_item_id = ci.id "
+            "JOIN tags_clothing_item tci_thickness ON tci_thickness.clothing_item_id = ci.id "
+            "JOIN tags t_weather ON t_weather.id = tci_weather.tag_id "
+            "JOIN tags t_length ON t_length.id = tci_length.tag_id "
+            "JOIN tags t_thickness ON t_thickness.id = tci_thickness.tag_id "
+            "WHERE c.type = %s "
+            "AND t_weather.tag_name = 'weather' AND tci_weather.tag_value = %s "
+            "AND t_length.tag_name = 'length' AND tci_length.tag_value = %s "
+            "AND t_thickness.tag_name = 'thickness' AND tci_thickness.tag_value = %s;"
+            , [random_type, random_weather, random_length, random_thickness])
         data = cursordb.fetchall()
         cursordb.close()
         db.close()
@@ -216,18 +225,22 @@ def get_dress(type, weather, thickness, sleeves, length):
         # get all clothing items that are classified as summer.
         cursordb.execute(
             "SELECT ci.id, ci.picture, ci.user_id, ci.category "
-            "FROM clothing_item ci JOIN categories c ON ci.category = c.id "
-            "JOIN tags_clothing_item tci ON tci.clothing_item_id = ci.id "
-            "JOIN tags t ON t.id = tci.tag_id WHERE c.type= %s"
-            "AND t.tag_name = 'weather'  "
-            "AND tci.tag_value = %s"
-            "AND t.tag_name = 'thickness'  "
-            "AND tci.tag_value = %s"
-            "AND t.tag_name = 'sleeves'  "
-            "AND tci.tag_value = %s"
-            "AND t.tag_name = 'length'  "
-            "AND tci.tag_value = %s"
-            , [random_type, random_weather, random_thickness, random_sleeves, random_length])
+            "FROM clothing_item ci "
+            "JOIN categories c ON ci.category = c.id "
+            "JOIN tags_clothing_item tci_weather ON tci_weather.clothing_item_id = ci.id "
+            "JOIN tags_clothing_item tci_sleeves ON tci_sleeves.clothing_item_id = ci.id "
+            "JOIN tags_clothing_item tci_length ON tci_length.clothing_item_id = ci.id "
+            "JOIN tags_clothing_item tci_thickness ON tci_thickness.clothing_item_id = ci.id "
+            "JOIN tags t_weather ON t_weather.id = tci_weather.tag_id "
+            "JOIN tags t_sleeves ON t_sleeves.id = tci_sleeves.tag_id "
+            "JOIN tags t_length ON t_length.id = tci_length.tag_id "
+            "JOIN tags t_thickness ON t_thickness.id = tci_thickness.tag_id "
+            "WHERE c.type = %s "
+            "AND t_weather.tag_name = 'weather' AND tci_weather.tag_value = %s "
+            "AND t_length.tag_name = 'length' AND tci_length.tag_value = %s "
+            "AND t_sleeves.tag_name = 'sleeves' AND tci_sleeves.tag_value = %s "
+            "AND t_thickness.tag_name = 'thickness' AND tci_thickness.tag_value = %s;"
+            , [random_type, random_weather, random_length, random_sleeves, random_thickness])
         data = cursordb.fetchall()
         cursordb.close()
         db.close()
@@ -246,6 +259,7 @@ def get_random_item(type, weather):
     :param weather:
     :return:
     """
+    random_type = random.choice(type)
     random_weather = random.choice(weather)
     try:
         # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="smatrwardrobe")
@@ -260,7 +274,7 @@ def get_random_item(type, weather):
             "JOIN tags_clothing_item tci ON tci.clothing_item_id = ci.id "
             "JOIN tags t ON t.id = tci.tag_id WHERE c.type= %s"
             "AND t.tag_name = 'weather'"
-            "AND tci.tag_value = %s", [type, random_weather])
+            "AND tci.tag_value = %s", [random_type, random_weather])
         data = cursordb.fetchall()
         cursordb.close()
         db.close()
@@ -350,19 +364,26 @@ def summer_outfit(json_obj, user_id):
 
     date = datetime.now().date()
     again = 1
+    options = ["skirts", "pants", "Dresses"]
     while again == 1:
         top = []
         bottom = []
         while top == [] or bottom == []:
-            clothing_type = chooseOutfitType(json_obj)
-            if clothing_type != "dress":
-                top = get_top(["shirt"], ["hot"], ["light"], ["sleeveless", "short sleeves"])
+            clothing_type = chooseOutfitType(options)
+            if clothing_type != "Dresses":
+                top = get_top(["shirts"], ["hot"], ["light"], ["sleeveless", "short sleeves"])
                 bottom = get_bottom([clothing_type], ["hot"], ["light"], ["short", "knee length"])
+                if bottom == []:
+                    options.remove(clothing_type)
 
             else:
                 top = get_dress([clothing_type], ["hot"], ["light"], ["short sleeves", "sleeveless"], ["short", "knee length"])
                 bottom = [None]
+                if top == []:
+                    options.remove(clothing_type)
         shoes = get_random_item(["Footwear"], ["hot"])
+        if shoes == []:
+            shoes = [None]
         outwear = None
         check = checkOutfit(user_id, top[0], bottom[0], shoes[0])
         if check == []:
@@ -370,7 +391,7 @@ def summer_outfit(json_obj, user_id):
             check = checkOutfit(user_id, top[0], bottom[0], shoes[0])
             return check[0][1]
 
-        elif (check[0][0] - date).days < wear_again_range:
+        elif (date - check[0][0]).days < wear_again_range:
             again = 1
         else:
             return check[1]
@@ -435,7 +456,7 @@ def cool_outfit(json_obj, user_id):
         while top == [] or bottom == []:
             clothing_type = chooseOutfitType(json_obj)
             if clothing_type != "dress":
-                top = get_top(["shirt"], ["hot", "warm"], ["light", "medium"], ["short sleeves"])
+                top = get_top(["shirts"], ["hot", "warm"], ["light", "medium"], ["short sleeves"])
                 bottom = get_bottom([clothing_type], ["hot", "warm"], ["light", "medium"], ["knee length", "long"])
 
             else:
@@ -473,7 +494,7 @@ def colder_outfit(json_obj, user_id):
         while top == [] or bottom == []:
             clothing_type = chooseOutfitType(json_obj)
             if clothing_type != "dress":
-                top = get_top(["shirt"], ["warm", "cool"], ["medium", "heavy"], ["long sleeves"])
+                top = get_top(["shirts"], ["warm", "cool"], ["medium", "heavy"], ["long sleeves"])
                 bottom = get_bottom([clothing_type], ["warm", "cool"], ["medium", "heavy"], ["long"])
 
             else:
@@ -513,7 +534,7 @@ def winter_outfit(json_obj, user_id):
         while top == [] or bottom == []:
             clothing_type = chooseOutfitType(json_obj)
             if clothing_type != "dress":
-                top = get_top(["shirt"], ["cold"], ["heavy"], ["long sleeves"])
+                top = get_top(["shirts"], ["cold"], ["heavy"], ["long sleeves"])
                 bottom = get_bottom([clothing_type], ["cold"], ["heavy"], ["long"])
 
             else:
@@ -613,29 +634,29 @@ import requests
 import functions
 
 
-def temperature():
-    longitude = "34"
-    latitude = "32"
-    r = requests.get(
-        'https://api.openweathermap.org/data/2.5/weather?lat=' + latitude + '.34&lon=' + longitude + '.99&appid=8f3241a0140c7cbf04fd85bcb7b1cef9')
-    json_obj = r.json()
-    # generate outfit
-    outfit = getOutfit(json_obj, 1)
-    print(outfit)
-    temp_k = float(json_obj['main']['temp'])
-    temp_c = temp_k - 273.15  # convert to celsius
-    return temp_c
-
-
-if __name__ == '__main__':
-    #temperature()
-    print(get_outfit_by_id(26))
-
 # def temperature():
-#     longitude = request.json.get('longitude')
-#     latitude = request.json.get('latitude')
-#     r = requests.get('https://api.openweathermap.org/data/2.5/weather?lat='+latitude+'.34&lon='+longitude+'.99&appid=8f3241a0140c7cbf04fd85bcb7b1cef9')
+#     longitude = "34"
+#     latitude = "32"
+#     r = requests.get(
+#         'https://api.openweathermap.org/data/2.5/weather?lat=' + latitude + '.34&lon=' + longitude + '.99&appid=8f3241a0140c7cbf04fd85bcb7b1cef9')
 #     json_obj = r.json()
-#     # temp_k = float(json_obj['main']['temp'])
-#     # temp_c = temp_k-273.15 # convert to celsius
-#     return json_obj
+#     # generate outfit
+#     outfit = getOutfit(json_obj, 1)
+#     print(outfit)
+#     temp_k = float(json_obj['main']['temp'])
+#     temp_c = temp_k - 273.15  # convert to celsius
+#     return temp_c
+#
+#
+# if __name__ == '__main__':
+#     temperature()
+#     #print(get_outfit_by_id(26))
+
+def temperature():
+    longitude = request.json.get('longitude')
+    latitude = request.json.get('latitude')
+    r = requests.get('https://api.openweathermap.org/data/2.5/weather?lat='+latitude+'.34&lon='+longitude+'.99&appid=8f3241a0140c7cbf04fd85bcb7b1cef9')
+    json_obj = r.json()
+    # temp_k = float(json_obj['main']['temp'])
+    # temp_c = temp_k-273.15 # convert to celsius
+    return json_obj
