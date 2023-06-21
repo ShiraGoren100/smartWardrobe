@@ -874,6 +874,34 @@ def change_temp_thresholds(json_obj, user_id, stars, feedback):
     elif feedback == "too cold":
         too_cold(hot_threshold, warm_threshold, cool_threshold, temperature, user_id)
 
+def temperature(latitude, longitude):
+    longitude1 = str(int(round(float(longitude))))
+    latitude1 = str(int(round(float(latitude))))
+    r = requests.get('https://api.openweathermap.org/data/2.5/weather?lat=' + latitude1 + '&lon=' + longitude1 + '&appid=8f3241a0140c7cbf04fd85bcb7b1cef9')
+    json_obj = r.json()
+    return json_obj
+
+
+def delete_outfit(outfit_id):
+    try:
+
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="smatrwardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
+                                     port=3307)
+        cursordb = db.cursor()
+        sql = "DELETE FROM outfits WHERE id = %s;"
+        val = (outfit_id)
+        cursordb.execute(sql, val)
+        db.commit()
+        cursordb.close()
+        db.close()
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+
+def regenerate(json_obj, user_id, outfit_id):
+    delete_outfit(outfit_id)
+    return getOutfit(json_obj, user_id)
 
 # def temperature():
 #     longitude = "34"
@@ -893,9 +921,3 @@ def change_temp_thresholds(json_obj, user_id, stars, feedback):
 #     temperature()
 #     #print(get_outfit_by_id(26))
 
-def temperature(latitude, longitude):
-    longitude1 = str(int(round(float(longitude))))
-    latitude1 = str(int(round(float(latitude))))
-    r = requests.get('https://api.openweathermap.org/data/2.5/weather?lat=' + latitude1 + '&lon=' + longitude1 + '&appid=8f3241a0140c7cbf04fd85bcb7b1cef9')
-    json_obj = r.json()
-    return json_obj
