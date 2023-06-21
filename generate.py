@@ -17,7 +17,7 @@ need_coat = 0
 closed_Shoes = 0
 rain = 0
 cover_up = 0
-#
+
 # cool_threshold = 18
 # warm_threshold = 24
 # cold_threshold = 14
@@ -31,8 +31,8 @@ def get_users_thresholds(user_id):
                                      port=3307)
         cursordb = db.cursor()
 
-        # get all clothing items that are classified as summer.
-        cursordb.execute("SELECT hot, warm, cool FROM user WHERE id = %s;", [user_id])
+
+        cursordb.execute("SELECT hot,warm,cool FROM user WHERE id = %s;", [user_id])
         data = cursordb.fetchall()
         cursordb.close()
         db.close()
@@ -47,6 +47,7 @@ def chooseOutfitType(options):
     :param options: lost of options of outfit types-dress\skirt\pants ect.
     :return:randomly chosen option
     """
+    # options = ["skirts", "pants", "Dresses"]
     random_choice = random.choice(options)  # need to change based on answer from db based on how many options we have.
     return random_choice
 
@@ -605,6 +606,7 @@ def get_outfit_by_weather(user_id, weather):
     """
     :return: outfit id
     """
+
     date = datetime.now().date()
     again = 1
     options = ["skirts", "pants", "Dresses"]
