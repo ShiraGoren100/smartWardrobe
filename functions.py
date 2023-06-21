@@ -204,6 +204,28 @@ def get_closet(user_id, category):
     except Exception as e:
         print(f"An error occurred: {e}")
 
+
+def get_item_by_id(item_id):
+    """
+    returns all item properties by the item id
+    :param user_id:
+    :return:
+    """
+    try:
+        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
+        cursordb = db.cursor()
+        cursordb.execute(
+            "    SELECT * FROM clothing_item WHERE id = %s",(item_id,))
+        # Fetch the result
+        data = cursordb.fetchall()
+        cursordb.close()
+        db.close()
+        return data
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+
 def get_item_property(item_id):
     try:
         #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")

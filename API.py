@@ -122,14 +122,16 @@ def get_outfit():
     userid = request.args.get('id')
     latitude = request.args.get('latitude')
     longitude = request.args.get('longitude')
-    tempJson= temperature()
+    tempJson = temperature(latitude, longitude)
     outfit_info = getOutfit(tempJson, userid)
     list1 = []
-    for i in range(1, 4):
-        get_item_as_clist(outfit_info[0][i], list1)
+    for i in range(1, 5):
+        if outfit_info[0][i] is not None:
+            item = functions.get_item_by_id(outfit_info[0][i])[0]
+            get_item_as_clist(item, list1)
         # Return response as JSON
     cList = clothingList(list1)
-    outfit = {"outfitId": i[0][0], "date": i[0][5], "list": cList, "userId": i[0][6]}
+    outfit = {"outfitId": outfit_info[0][0], "date": outfit_info[0][5], "list": list1, "userId": outfit_info[0][6]}
     print(request.args)
     return jsonify(outfit)
 
