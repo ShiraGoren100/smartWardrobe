@@ -122,7 +122,7 @@ def get_outfit():
     userid = request.args.get('id')
     latitude = request.args.get('latitude')
     longitude = request.args.get('longitude')
-    tempJson= temperature()
+    tempJson= temperature(latitude,longitude)
     outfit_info = getOutfit(tempJson, userid)
     list1 = []
     for i in range(1, 4):

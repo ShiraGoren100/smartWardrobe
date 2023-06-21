@@ -21,8 +21,8 @@ from datetime import datetime
 from functions import get_category_id
 
 # Establish a connection to the MySQL server
-db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
-# db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="smatrwardrobe")
+# db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
 cursordb = db.cursor()
 
 need_jacket = 0
@@ -34,17 +34,16 @@ cover_up = 0
 # cool_threshold = 18
 # warm_threshold = 24
 # cold_threshold = 14
-wear_again_range = 2
+wear_again_range = 14
 
 def get_users_thresholds(user_id):
     try:
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="smatrwardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
-                                     port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursordb = db.cursor()
 
-        # get all clothing items that are classified as summer.
-        cursordb.execute("SELECT hot, warm, cool FROM user WHERE id = %s;", [user_id])
+
+        cursordb.execute("SELECT hot,warm,cool FROM user WHERE id = %s;", [user_id])
         data = cursordb.fetchall()
         cursordb.close()
         db.close()
@@ -122,9 +121,8 @@ def get_top(type, weather, thickness, sleeves):
     random_sleeves = random.choice(sleeves)
 
     try:
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="smatrwardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
-                                     port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursordb = db.cursor()
         cursordb.execute(
             "SELECT ci.id, ci.picture, ci.user_id, ci.category "
@@ -170,9 +168,8 @@ def get_bottom(type, weather, thickness, length):
     random_thickness = random.choice(thickness)
     random_length = random.choice(length)
     try:
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="smatrwardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
-                                     port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursordb = db.cursor()
 
         # get all clothing items that are classified as summer.
@@ -217,9 +214,8 @@ def get_dress(type, weather, thickness, sleeves, length):
     random_sleeves = random.choice(sleeves)
     random_length = random.choice(length)
     try:
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="smatrwardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
-                                     port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursordb = db.cursor()
 
         # get all clothing items that are classified as summer.
@@ -262,9 +258,8 @@ def get_random_item(type, weather):
     random_type = random.choice(type)
     random_weather = random.choice(weather)
     try:
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="smatrwardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
-                                     port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursordb = db.cursor()
 
         # get all clothing items that are classified as summer.
@@ -300,9 +295,8 @@ def add_outfit(user_id, top, bottom, outwear, shoes):
     date_string = date.strftime("%Y-%m-%d")
     try:
 
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="smatrwardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
-                                     port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
         cursordb = db.cursor()
         sql = "INSERT INTO outfits (top, bottom, outwear, shoes, last_used, user_id) VALUES (%s, %s, %s, %s, %s, %s)"
         val = (top, bottom, outwear, shoes, date_string, user_id)
@@ -320,9 +314,8 @@ def get_outfit_by_id(id):
     :return: all outfit info
     """
     try:
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="smatrwardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
-                                     port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursordb = db.cursor()
 
         # get all clothing items that are classified as summer.
@@ -338,9 +331,8 @@ def get_outfit_by_id(id):
 
 def checkOutfit(user_id, top, bottom, shoes):
     try:
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="smatrwardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
-                                     port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursordb = db.cursor()
 
         # get all clothing items that are classified as summer.
@@ -398,9 +390,8 @@ def summer_outfit(json_obj, user_id):
 
 def is_type_sleeves(top_id, sleeve_type):
     try:
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="smatrwardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
-                                     port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursordb = db.cursor()
 
         cursordb.execute(
@@ -421,9 +412,8 @@ def is_type_sleeves(top_id, sleeve_type):
 
 def is_type_weather(clothing_id, weather_type):
     try:
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="smatrwardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
-                                     port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
         cursordb = db.cursor()
 
         cursordb.execute(
@@ -450,19 +440,25 @@ def cool_outfit(json_obj, user_id):
     """
     date = datetime.now().date()
     again = 1
+    options = ["skirts", "pants", "Dresses"]
     while again == 1:
         top = []
         bottom = []
         while top == [] or bottom == []:
-            clothing_type = chooseOutfitType(json_obj)
-            if clothing_type != "dress":
+            clothing_type = chooseOutfitType(options)
+            if clothing_type != "Dresses":
                 top = get_top(["shirts"], ["hot", "warm"], ["light", "medium"], ["short sleeves"])
                 bottom = get_bottom([clothing_type], ["hot", "warm"], ["light", "medium"], ["knee length", "long"])
-
+                # if bottom == []:
+                #     options.remove(clothing_type)
             else:
                 top = get_dress([clothing_type], ["hot", "warm"], ["light", "medium"], ["short sleeves", "long"], ["knee length", "long"])
                 bottom = [None]
+                # if top == []:
+                #     options.remove(clothing_type)
         shoes = get_random_item("Footwear", ["hot", "warm"])
+        if shoes == []:
+            shoes = [None]
         if is_type_sleeves(top[0], "short sleeves"):
             outwear = get_random_item("outwear", "warm")
             if outwear == []:
@@ -488,20 +484,26 @@ def colder_outfit(json_obj, user_id):
        """
     date = datetime.now().date()
     again = 1
+    options = ["skirts", "pants", "Dresses"]
     while again == 1:
         top = []
         bottom = []
         while top == [] or bottom == []:
-            clothing_type = chooseOutfitType(json_obj)
-            if clothing_type != "dress":
+            clothing_type = chooseOutfitType(options)
+            if clothing_type != "Dresses":
                 top = get_top(["shirts"], ["warm", "cool"], ["medium", "heavy"], ["long sleeves"])
                 bottom = get_bottom([clothing_type], ["warm", "cool"], ["medium", "heavy"], ["long"])
-
+                if bottom == []:
+                    options.remove(clothing_type)
             else:
                 top = get_dress([clothing_type], ["warm", "cool"], ["medium", "heavy"], ["long sleeves"],
                                 ["long"])
                 bottom = [None]
+                if top == []:
+                    options.remove(clothing_type)
         shoes = get_random_item(["Footwear"], ["warm", "cool"])
+        if shoes == []:
+            shoes = [None]
         if is_type_weather(top[0], "warm"):
             outwear = get_random_item(["outwear"], ["cool"])
             if outwear == []:
@@ -528,19 +530,25 @@ def winter_outfit(json_obj, user_id):
        """
     date = datetime.now().date()
     again = 1
+    options = ["skirts", "pants", "Dresses"]
     while again == 1:
         top = []
         bottom = []
         while top == [] or bottom == []:
-            clothing_type = chooseOutfitType(json_obj)
-            if clothing_type != "dress":
+            clothing_type = chooseOutfitType(options)
+            if clothing_type != "Dresses":
                 top = get_top(["shirts"], ["cold"], ["heavy"], ["long sleeves"])
                 bottom = get_bottom([clothing_type], ["cold"], ["heavy"], ["long"])
-
+                if bottom == []:
+                    options.remove(clothing_type)
             else:
                 top = get_dress([clothing_type], ["cold"], ["heavy"], ["long sleeves"], ["long"])
                 bottom = [None]
+                if top == []:
+                    options.remove(clothing_type)
         shoes = get_random_item(["Footwear"], ["cold"])
+        if shoes == []:
+            shoes = [None]
         outwear = get_random_item(["outwear"], ["cold"])
         check = checkOutfit(user_id, top[0], bottom[0], shoes[0])
         if check == []:
@@ -585,9 +593,8 @@ def change_threshold(threshold_to_change, val, user_id):
     # WHERE user_id = <your_user_id>;
     try:
 
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="smatrwardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
-                                     port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursordb = db.cursor()
         sql = "UPDATE user SET %s = %s WHERE user_id = %s"
         val = (threshold_to_change, val, user_id)
@@ -656,6 +663,32 @@ def temperature():
     longitude = request.json.get('longitude')
     latitude = request.json.get('latitude')
     r = requests.get('https://api.openweathermap.org/data/2.5/weather?lat='+latitude+'.34&lon='+longitude+'.99&appid=8f3241a0140c7cbf04fd85bcb7b1cef9')
+    json_obj = r.json()
+    # temp_k = float(json_obj['main']['temp'])
+    # temp_c = temp_k-273.15 # convert to celsius
+    return json_obj
+# def temperature(latitude, longitude):
+#     longitude1 = str(int(round(float(longitude))))
+#     latitude1 = str(int(round(float(latitude))))
+#     r = requests.get(
+#         'https://api.openweathermap.org/data/2.5/weather?lat=' + latitude1 + '&lon=' + longitude1 + '&appid=8f3241a0140c7cbf04fd85bcb7b1cef9')
+#     json_obj = r.json()
+#     # generate outfit
+#     outfit = getOutfit(json_obj,1 )
+#     print(outfit)
+#     temp_k = float(json_obj['main']['temp'])
+#     temp_c = temp_k - 273.15  # convert to celsius
+#     return temp_c
+#
+#
+# if __name__ == '__main__':
+#     # temperature()
+#     print(get_outfit_by_id(26))
+
+def temperature(latitude, longitude):
+    longitude1 = str(int(round(float(longitude))))
+    latitude1 = str(int(round(float(latitude))))
+    r = requests.get('https://api.openweathermap.org/data/2.5/weather?lat=' + latitude1 + '&lon=' + longitude1 + '&appid=8f3241a0140c7cbf04fd85bcb7b1cef9')
     json_obj = r.json()
     # temp_k = float(json_obj['main']['temp'])
     # temp_c = temp_k-273.15 # convert to celsius
