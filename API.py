@@ -88,6 +88,8 @@ def addItem():
 
 def get_item_as_clist(i, list1):
     properties = functions.get_item_property(i[0])
+    if properties is None:
+        return
     title_value_list = []
     # tup = property['properties']
     for prop in properties:
@@ -127,8 +129,8 @@ def get_outfit():
     list1 = []
     for i in range(1, 5):
         if outfit_info[0][i] is not None:
-            item = functions.get_item_by_id(outfit_info[0][i])[0]
-            get_item_as_clist(item, list1)
+                item = functions.get_item_by_id(outfit_info[0][i])[0]
+                get_item_as_clist(item, list1)
         # Return response as JSON
     cList = clothingList(list1)
     outfit = {"outfitId": outfit_info[0][0], "date": outfit_info[0][5], "list": list1, "userId": outfit_info[0][6]}
