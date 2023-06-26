@@ -102,7 +102,7 @@ class ClosetFragment : Fragment() {
                     // e.g., Update UI, populate RecyclerView, etc.
                 } else {
                     // There was an error or the response was not successful
-                    // Handle the error case
+                    // Handle the error case todo
                 }
             }
 

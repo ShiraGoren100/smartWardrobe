@@ -18,10 +18,13 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.smartwardrobe.MainActivity
 import com.example.smartwardrobe.R
 import com.example.smartwardrobe.RetrofitClient
 import com.example.smartwardrobe.data.ClothingItem
+import com.example.smartwardrobe.data.model.Outfit
 import com.example.smartwardrobe.databinding.FragmentHomeBinding
 import com.example.smartwardrobe.rate.RateActivity
 import com.example.smartwardrobe.ui.closet.ClothingAdapter
@@ -34,8 +37,8 @@ class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private lateinit var locationManager: LocationManager
-    private lateinit var outfit: ArrayList<ClothingItem>
-    private lateinit var itemsAdapter: ClothingAdapter
+    lateinit var outfit: Outfit
+    private lateinit var itemsAdapter: OutfitAdapter
 
 
     // This property is only valid between onCreateView and
@@ -49,55 +52,75 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
         binding.btnRegenerate.visibility = View.GONE
+//        binding.btnNewOutfit.text = getString(R.string.regenerate_outfit)
+
         locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        outfit = ArrayList<ClothingItem>()
-        itemsAdapter = ClothingAdapter()
+//        outfit = ArrayList<ClothingItem>()
+        binding.outfit.layoutManager = LinearLayoutManager(activity)
+
+        itemsAdapter = OutfitAdapter()
         binding.outfit.adapter = itemsAdapter
 
         //remove this:
         binding.btnRate.setOnClickListener {
+
             val intent = Intent(activity, RateActivity::class.java)
             val extraData = "5"//outfit id
+            intent.putExtra("outfit_id", outfit.outfitId)
+            intent.putExtra("user_id", outfit.userId)
+            startActivity(intent)
 //            intent.putExtra("outfit_id", extraData)
 
             startActivity(intent)
         }
 
-        binding.btnNewOutfit.setOnClickListener {
-            /*if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                val location: Location? = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                if (location != null) {
-                    // Use location.latitude and location.longitude to get the latitude and longitude values.
-//                Log.d("Location", "Latitude: ${location.latitude}, Longitude: ${location.longitude}")
-                }
-            }*/
 
+        binding.btnRegenerate.setOnClickListener {
             (activity as MainActivity?)?.getLocation { addressList ->
                 // Handle the geocoding result here
                 if (addressList != null) {
-                    // Process the address list
                     Toast.makeText(context, addressList?.get(0)?.locality ?: "non", Toast.LENGTH_LONG).show()
-                    outfit = getOutfit(addressList)
-//                    itemsAdapter.notifyDataSetChanged()
-                    val newItems: List<ClothingItem> = outfit
-                    itemsAdapter.updateData(newItems)
-//                    binding.btnRegenerate.visibility = View.VISIBLE
-                    binding.btnNewOutfit.text= getString(R.string.regenerate_outfit)
-                    binding.btnRate.visibility = View.VISIBLE
-                    binding.btnRate.setOnClickListener {
-                        val intent = Intent(activity, RateActivity::class.java)
-                        val extraData = "5"//outfit id
-                        intent.putExtra("outfit_id", extraData)
-                        intent.putExtra("user_id", (activity as MainActivity).userid)
-                        startActivity(intent)
+                    lifecycleScope.launch {
+                        val clothingLst = regenerate(outfit.outfitId, addressList)
+                        if (clothingLst != null) {
+                            outfit = clothingLst
+                            val newItems: ArrayList<ClothingItem> = clothingLst.list
+                            itemsAdapter.updateData(newItems)
+
+                            itemsAdapter.notifyDataSetChanged()
+
+                        } else {
+                            //there was an error generating the outfit todo
+                        }
                     }
                 } else {
-                    // Handle the case when the location or geocoding is not available
-                    val resourceId = R.string.here
-
-//                    Toast.makeText(context,resources.getString(resourceId) , Toast.LENGTH_LONG).show()
                     Toast.makeText(context, addressList?.get(0)?.locality ?: "non", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+        binding.btnNewOutfit.setOnClickListener {
+            (activity as MainActivity?)?.getLocation { addressList ->
+                // Handle the geocoding result here
+                if (addressList != null) {
+                    Toast.makeText(context, addressList?.get(0)?.locality ?: "non", Toast.LENGTH_LONG).show()
+                    lifecycleScope.launch {
+                        val clothingLst = getOutfit(addressList)
+                        if (clothingLst != null) {
+                            outfit = clothingLst
+                            val newItems: ArrayList<ClothingItem> = clothingLst.list
+                            itemsAdapter.updateData(newItems)
 
+                            itemsAdapter.notifyDataSetChanged()
+                            binding.btnRegenerate.visibility = View.VISIBLE
+                            binding.btnRate.visibility = View.VISIBLE
+                            binding.btnNewOutfit.visibility = View.GONE
+                        } else {
+                            //there was an error generating the outfit todo
+                        }
+                    }
+//                    outfit = getOutfit(addressList)
+                } else {
+                    Toast.makeText(context, addressList?.get(0)?.locality ?: "non", Toast.LENGTH_LONG).show()
                 }
             }
 
@@ -107,15 +130,55 @@ class HomeFragment : Fragment() {
 //            var outfit = getOutfit(addressList)
 
         }
-
-
         return root
     }
 
-    private fun getOutfit(addressList: List<Address>?): ArrayList<ClothingItem> {
+    private suspend fun regenerate(outfitId: Int, addressList: List<Address>?): Outfit? {
+        var retrofit = RetrofitClient.myApi
+        val queryParameters =
+            mapOf(
+                "id" to (activity as MainActivity).userid,
+                "latitude" to addressList!![0].latitude.toString(),
+                "longitude" to addressList!![0].longitude.toString(),
+                "outfitid" to outfitId.toString()
+            )
+
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = retrofit.regenerateOutfit(queryParameters).execute()
+                if (response.isSuccessful) {
+                    val lst = response.body()
+                    lst // Cast the response to Outfit
+                } else {
+                    null // Return null or handle the error case appropriately
+                }
+            } catch (e: Exception) {
+                print(e)
+                null // Return null or handle the exception case appropriately
+            }
+        }
+    }
+
+    private suspend fun getOutfit(addressList: List<Address>?): Outfit? {
+        val out: Outfit
         var retrofit = RetrofitClient.myApi
         val queryParameters = mapOf("id" to (activity as MainActivity).userid, "latitude" to addressList!![0].latitude.toString(), "longitude" to addressList!![0].longitude.toString())
 
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = retrofit.getOutfit(queryParameters).execute()
+                if (response.isSuccessful) {
+                    val lst = response.body()
+                    lst // Cast the response to Outfit
+                } else {
+                    null // Return null or handle the error case appropriately
+                }
+            } catch (e: Exception) {
+                print(e)
+                null // Return null or handle the exception case appropriately
+            }
+        }
+    }/*
         GlobalScope.launch(Dispatchers.IO) {
             val response = retrofit.getOutfit(queryParameters as Map<String, String>).execute()
             withContext(Dispatchers.Main) {
@@ -127,8 +190,8 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-        return ArrayList<ClothingItem>()
-    }
+        return null
+    }*/
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

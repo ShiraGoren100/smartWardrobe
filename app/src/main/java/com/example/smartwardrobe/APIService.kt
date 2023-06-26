@@ -2,6 +2,7 @@ package com.example.smartwardrobe
 
 import com.example.smartwardrobe.data.ClothingItem
 import com.example.smartwardrobe.data.model.LoggedInUser
+import com.example.smartwardrobe.data.model.Outfit
 import com.example.smartwardrobe.data.model.User
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
@@ -26,7 +27,10 @@ interface APIService {
     fun getCloset(@QueryMap params: Map<String, String>): Call<List<ClothingItem>>
 
     @GET("/outfit")
-    fun getOutfit(@QueryMap params: Map<String, String>): Call<ArrayList<ClothingItem>>
+    fun getOutfit(@QueryMap params: Map<String, String>): Call<Outfit>
+
+    @GET("/regenerate")
+    fun regenerateOutfit(@QueryMap params: Map<String, String>): Call<Outfit>
 
     @POST("/addItem")
     fun addItem(@Query("id") userid: String, @Body json: RequestBody): Call<ResponseBody>

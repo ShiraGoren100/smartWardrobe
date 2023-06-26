@@ -70,6 +70,7 @@
         <item>Sleeves</item>
         <item>Length</item>
         <item>Weather</item>
+        <item>Thickness</item>
     </string-array>
 
     <string-array name="category_Shirts">
@@ -114,17 +115,9 @@
     </string-array>
 
     <string-array name="feature_Weather">
-        <item>Sunny</item>
-        <item>Cloudy</item>
-        <item>Partly cloudy</item>
-        <item>Rainy</item>
-        <item>Stormy</item>
-        <item>Snowy</item>
-        <item>Foggy</item>
-        <item>Heat wave</item>
-        <item>Cold wave</item>
-        <item>Freezing rain</item>
-        <item>Dust storm</item>
-        <item>Gusty winds</item>
+        <item>Hot</item>
+        <item>Warm</item>
+        <item>Cold</item>
+        <item>Cool</item>
     </string-array>
 </resources>
