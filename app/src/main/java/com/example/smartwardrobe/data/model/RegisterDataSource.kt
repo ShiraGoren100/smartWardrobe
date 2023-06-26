@@ -20,7 +20,7 @@ class RegisterDataSource {
                 if (response.isSuccessful) {
                     val userRes = response.body()
                     if (userRes != null) {
-                        Result.Success(LoggedInUser(userRes.userId, userRes.displayName))
+                        Result.Success(LoggedInUser(userRes.userId, userRes.displayName,userRes.interval))
                     } else {
                         Result.Error(NullPointerException())
                     }

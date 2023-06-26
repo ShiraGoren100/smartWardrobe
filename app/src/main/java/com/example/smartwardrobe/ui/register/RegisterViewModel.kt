@@ -29,7 +29,7 @@ class RegisterViewModel(private val registerRepository: RegisterRepository) : Vi
              val result = registerRepository.register(username, mail, password)
 
              if (result is Result.Success) {
-                 _registerResult.value = LoginResult(success = result.data?.let { LoggedInUserView(displayName = it.displayName, id = result.data.userId) })
+                 _registerResult.value = LoginResult(success = result.data?.let { LoggedInUserView(displayName = it.displayName, id = result.data.userId, interval = it.interval) })
              } else {
                  _registerResult.value = LoginResult(error = R.string.login_failed)
              }

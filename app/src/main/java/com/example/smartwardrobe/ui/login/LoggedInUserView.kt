@@ -5,6 +5,7 @@ package com.example.smartwardrobe.ui.login
  */
 data class LoggedInUserView(
     val displayName: String,
-    val id: String
+    val id: String,
+    val interval: Int
     //... other data fields that may be accessible to the UI
 )

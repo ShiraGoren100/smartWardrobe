@@ -69,9 +69,6 @@ class HomeFragment : Fragment() {
             intent.putExtra("outfit_id", outfit.outfitId)
             intent.putExtra("user_id", outfit.userId)
             startActivity(intent)
-//            intent.putExtra("outfit_id", extraData)
-
-            startActivity(intent)
         }
 
 

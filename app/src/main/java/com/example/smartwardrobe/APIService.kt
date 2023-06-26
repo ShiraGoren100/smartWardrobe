@@ -20,6 +20,9 @@ interface APIService {
     @POST("/register")
     fun registerUser(@Body connectedUser: User): Call<LoggedInUser>
 
+    @POST("/interval")
+    fun updateInterval(@QueryMap params: Map<String, String>): Call<ResponseBody>
+
     @GET("/api/users")
     fun getUsers(): Call<List<LoggedInUser>>
 
@@ -39,6 +42,6 @@ interface APIService {
      fun deleteItem(@Query("id") id: Int): Call<ResponseBody>
 
     @POST("/rateOutfit")
-    fun rateOutfit(@QueryMap params: Map<String, String>): Response<Unit>
+    fun rateOutfit(@QueryMap params: Map<String, String>): Call<ResponseBody>
 
 }

@@ -142,6 +142,7 @@ class LoginActivity : AppCompatActivity() {
 
         editor.putString("name", user?.displayName)
         editor.putString("id", user?.id)
+        editor.putString("interval", user?.interval.toString())
         editor.apply()
     }
 

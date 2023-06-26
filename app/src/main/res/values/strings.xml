@@ -60,7 +60,7 @@
     <string name="to_register">Don\'t have a user? click</string>
     <string name="here">here</string>
     <string name="new_outfit">Generate a new outfit</string>
-    <string name="user">User</string>
+    <string name="user">User Info</string>
     <string name="logout">Logout</string>
     <string name="title_activity_rate">RateActivity</string>
 
@@ -72,6 +72,7 @@
     <string name="submit">Submit</string>
     <string name="regenerate_outfit">Regenerate outfit</string>
     <string name="rate">Rate</string>
+    <string name="interval">Days interval</string>
 
 
     <!--    <string name="try_again">Try again later</string>-->

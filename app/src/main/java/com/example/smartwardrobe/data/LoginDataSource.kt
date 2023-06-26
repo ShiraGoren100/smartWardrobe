@@ -27,7 +27,7 @@ class LoginDataSource {
                 if (response.isSuccessful) {
                     val userRes = response.body()
                     if (userRes != null) {
-                        Result.Success(LoggedInUser(userRes.userId, userRes.displayName))
+                        Result.Success(LoggedInUser(userRes.userId, userRes.displayName,userRes.interval))
                     } else {
                         Result.Error(NullPointerException())
                     }
@@ -47,6 +47,7 @@ class LoginDataSource {
             val call = retrofit.registerUser(user)
             var pname: String? = null
             var uid: String? = null
+            var inter: Int? = null
 
             call.enqueue(object : Callback<LoggedInUser> {
                 override fun onResponse(call: Call<LoggedInUser>, response: Response<LoggedInUser>) {
@@ -57,6 +58,7 @@ class LoginDataSource {
                     Log.i(ContentValues.TAG, "onResponse: " + userRes)
                     pname = userRes.displayName
                     uid = userRes.userId
+                    inter=userRes.interval
                 }
 
                 override fun onFailure(call: Call<LoggedInUser>?, t: Throwable) {
@@ -65,10 +67,10 @@ class LoginDataSource {
                 }
 
             })
-            if (uid == null || pname == null) {
+            if (uid == null || pname == null||inter==null) {
                 return Result.Error(NullPointerException())
             } else {
-                val fakeUser = LoggedInUser(uid!!, pname!!)
+                val fakeUser = LoggedInUser(uid!!, pname!!,inter!!)
                 return Result.Success(fakeUser)
             }
         } catch (e: Throwable) {
