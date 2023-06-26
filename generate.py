@@ -1,7 +1,7 @@
 import random
 from datetime import datetime
-from closet import get_outfit_by_id, get_top_item, get_bottom_item, get_dress_item, get_shoes_item, check_outfit, \
-    add_outfit, delete_outfit, get_jacket
+from closet import get_outfit_by_id, check_outfit, get_jacket, add_outfit, delete_outfit
+from outfit_generateor import get_top_item, get_bottom_item, get_dress_item, get_shoes_item
 from user_file import get_users_thresholds, get_days_interval, change_threshold
 from weather_file import get_weather
 
@@ -16,68 +16,7 @@ def choose_outfit_type(options):
     return random_choice
 
 
-def is_item_for_hot(data):
-    if data[4] == 'cool' or data[4] == 'cold' or data[5] == 'long sleeves' or data[6] == 'heavy':
-        return False
-    else:
-        return True
 
-
-def is_item_for_warm(data):
-    if data[6] == 'heavy':
-        return False
-    else:
-        return True
-
-
-def is_item_for_cool(data):
-    if data[6] == 'short':
-        return False
-    else:
-        return True
-
-
-def is_item_for_cold(data):
-    if data[6] == 'knee length' or data[6] == 'short':
-        return False
-    else:
-        return True
-
-
-def check_if_fits_weather(weather, data):
-    if weather == 'hot':
-        return is_item_for_hot(data)
-    if weather == 'warm':
-        return is_item_for_warm(data)
-    if weather == 'cool':
-        return is_item_for_cool(data)
-    if weather == 'cold':
-        return is_item_for_cold(data)
-
-
-def shoes_for_hot(data):
-    if data[4] == 'cold':
-        return False
-    else:
-        return True
-
-
-def shoes_for_cool(data):
-    if data[4] == 'hot':
-        return False
-    else:
-        return True
-
-
-def shoes_fit_weather(weather, data):
-    if weather == 'hot':
-        return shoes_for_hot(data)
-    if weather == 'warm':
-        return shoes_for_hot(data)
-    if weather == 'cool':
-        return shoes_for_cool(data)
-    if weather == 'cold':
-        return shoes_for_cool(data)
 
 
 def chooseOutfitType(options):

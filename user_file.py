@@ -14,8 +14,8 @@ def insert_new_user(username, password, email):
     :return: the users id
     """
     try:
-        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursor = db.cursor()
         sql = "INSERT INTO user (userName, password, email, hot, warm, cool, days_interval) VALUES (%s, %s, %s,%s, %s, %s, %s)"
         val = (username, password, email, warm_threshold, cool_threshold, cold_threshold, 3)
@@ -38,21 +38,28 @@ def get_user_id(password, email):
     :return: user id
     """
     try:
-        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
         cursordb = db.cursor()
         cursordb.execute(
-            "SELECT id,username,days_interval FROM user WHERE  password = %s And email = %s",
-            ((password), (email)))
-        # Fetch the result
-        user_id = cursordb.fetchone()[0]
-        user_name = cursordb.fetchone()[1]
-        dump = cursordb.fetchall()
-        cursordb.close()
-        db.close()
-        return str(user_id), user_name
+            "SELECT id, username, days_interval FROM user WHERE password = %s AND email = %s",
+            (password, email))  # Pass parameters as a tuple without extra parentheses
+        result = cursordb.fetchall()
+
+        if result:
+            user_id = str(result[0][0])  # Get user_id from the first row
+            user_name = result[0][1]  # Get username from the first row
+            interval = result[0][2]  # Get days_interval from the first row
+            cursordb.close()
+            db.close()
+            return user_id, user_name, interval
+        else:
+            print("User not found.")
+            cursordb.close()
+            db.close()
+            return None
     except Exception as e:
         print(f"An error occurred: {e}")
+        return None
 
 
 def get_users_thresholds(user_id):
@@ -63,9 +70,8 @@ def get_users_thresholds(user_id):
     """
 
     try:
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
-                                     port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",                    port=3307)
         cursordb = db.cursor()
         cursordb.execute("SELECT hot,warm,cool FROM user WHERE id = %s;", [user_id])
         data = cursordb.fetchall()
@@ -85,8 +91,8 @@ def set_days_interval(user_id, val):
     """
     try:
 
-        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
 
         cursordb = db.cursor()
         sql = "UPDATE user SET days_interval = %s WHERE id = %s"
@@ -104,9 +110,8 @@ def get_days_interval(user_id):
       returns the days user wants between re-wearing outfit
     """
     try:
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
-                                     port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",           port=3307)
 
         cursordb = db.cursor()
         cursordb.execute("SELECT days_interval "
@@ -122,8 +127,8 @@ def get_days_interval(user_id):
 def change_threshold(threshold_to_change, val, user_id):
     try:
 
-        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
 
         cursordb = db.cursor()
         if threshold_to_change == 'hot':

@@ -1,9 +1,9 @@
 import json
-from flask import Flask, jsonify, request, render_template
-import closet
+from flask import Flask, jsonify, request
 import user_file
 import generate
-from generate import  regenerate
+from closet import insert_new_item, get_item_property, get_item_by_id, delete_item, get_items_from_closet
+from generate import regenerate
 from weather_file import temperature
 
 app = Flask(__name__)
@@ -17,7 +17,7 @@ class LoggedInUser:
     def __init__(self, userId, displayName, days_interval):
         self.userId = userId
         self.displayName = displayName
-        self.days_interval = days_interval
+        self.interval = days_interval
 
 
 class clothingList:
@@ -85,11 +85,11 @@ def addItem():
     userid = request.args.get('id')
     print(userid)
     print(data)
-    closet.insert_new_item(data, userid)
+    insert_new_item(data, userid)
     return {'result': 'success'}
 
 def get_item_as_clist(i, list1):
-    properties = closet.get_item_property(i[0])
+    properties = get_item_property(i[0])
     if properties is None:
         return
     title_value_list = []
@@ -109,7 +109,7 @@ def get_closet():
     category = request.args.get('category')
     print(userid + "," + category)
     # Perform operations using userid and category
-    data = get_closet(userid, category)
+    data = get_items_from_closet(userid, category)
     list1 = []
     for i in data:
        get_item_as_clist(i, list1)
@@ -136,7 +136,7 @@ def get_outfit():
     list1 = []
     for i in range(1, 5):
         if outfit_info[0][i] is not None:
-                item = closet.get_item_by_id(outfit_info[0][i])[0]
+                item = get_item_by_id(outfit_info[0][i])[0]
                 get_item_as_clist(item, list1)
         # Return response as JSON
     cList = clothingList(list1)
@@ -159,7 +159,7 @@ def regenerate_outfit():
     list1 = []
     for i in range(1, 5):
         if outfit_info[0][i] is not None:
-                item = closet.get_item_by_id(outfit_info[0][i])[0]
+                item = get_item_by_id(outfit_info[0][i])[0]
                 get_item_as_clist(item, list1)
         # Return response as JSON
     cList = clothingList(list1)
@@ -171,7 +171,7 @@ def regenerate_outfit():
 @app.route('/deleteItem', methods=['DELETE'])
 def deleteItem():
     item_id = request.args.get('id')
-    closet.delete_item(item_id)
+    delete_item(item_id)
     return {'result': 'success'}
 
 
@@ -183,6 +183,15 @@ def rateOutfit():
     option = request.args.get('option')
     print(userid)
     generate.change_temp_thresholds(userid, outfitid,  option)
+    return {'result': 'success'}
+
+@app.route('/interval', methods=['POST'])
+def updateInterval():
+    # todo:add rating to outfit
+    userid = request.args.get('id')
+    interval=request.args.get('interval')
+    print(userid)
+    user_file.set_days_interval(userid, interval)
     return {'result': 'success'}
 
 
