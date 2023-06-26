@@ -1,33 +1,16 @@
 import mysql.connector
 import random
 from datetime import datetime
-from flask import Flask, jsonify, request, render_template
 import requests
-import functions
 
-from functions import get_category_id
 
-# Establish a connection to the MySQL server
-# db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
-# db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="smatrwardrobe")
-# cursordb = db.cursor()
-
-need_jacket = 0
-need_coat = 0
-closed_Shoes = 0
-rain = 0
-cover_up = 0
-
-# cool_threshold = 18
-# warm_threshold = 24
-# cold_threshold = 14
 wear_again_range = 2
 
 
 def get_users_thresholds(user_id):
     try:
-        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",    port=3307)
+        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",    port=3307)
         cursordb = db.cursor()
         cursordb.execute("SELECT hot,warm,cool FROM user WHERE id = %s;", [user_id])
         data = cursordb.fetchall()
@@ -44,8 +27,7 @@ def chooseOutfitType(options):
     :param options: lost of options of outfit types-dress\skirt\pants ect.
     :return:randomly chosen option
     """
-    # options = ["skirts", "pants", "Dresses"]
-    random_choice = random.choice(options)  # need to change based on answer from db based on how many options we have.
+    random_choice = random.choice(options)
     return random_choice
 
 
@@ -99,6 +81,31 @@ def check_if_fits_weather(weather, data):
         return is_item_for_cold(data)
 
 
+def shoes_for_hot(data):
+    if data[4] == 'cold':
+        return False
+    else:
+        return True
+
+
+def shoes_for_cool(data):
+    if data[4] == 'hot':
+        return False
+    else:
+        return True
+
+
+def shoes_fit_weather(weather, data):
+    if weather == 'hot':
+        return shoes_for_hot(data)
+    if weather == 'warm':
+        return shoes_for_hot(data)
+    if weather == 'cool':
+        return shoes_for_cool(data)
+    if weather == 'cold':
+        return shoes_for_cool(data)
+
+
 def get_shoes_item(type, weather):
     """
        returns random clothing item that is of 'type' footwear
@@ -108,8 +115,8 @@ def get_shoes_item(type, weather):
     valid = False
     random_choice = []
     try:
-        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
         cursordb = db.cursor()
         cursordb.execute(
             "SELECT ci.id, ci.picture, ci.user_id, ci.category, "
@@ -125,11 +132,14 @@ def get_shoes_item(type, weather):
         data = cursordb.fetchall()
         cursordb.close()
         db.close()
-
-
-        if data == []:
-            return data
-        random_choice = random.choice(data)
+        while not valid:
+            if data == []:
+                return data
+            random_choice = random.choice(data)
+            valid = shoes_fit_weather(weather, random_choice)
+            if not valid:
+                data.remove(random_choice)
+                random_choice = random.choice(data)
         return random_choice
     except Exception as e:
         print(f"An error occurred: {e}")
@@ -147,8 +157,8 @@ def get_top_item(type, weather):
     valid = False
     random_choice = []
     try:
-        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
+        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursordb = db.cursor()
         cursordb.execute(
             "SELECT ci.id, ci.picture, ci.user_id, ci.category, "
@@ -195,8 +205,8 @@ def get_bottom_item(type, weather):
     valid = False
     random_choice = []
     try:
-        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
         cursordb = db.cursor()
         cursordb.execute(
             "SELECT ci.id, ci.picture, ci.user_id, ci.category, "
@@ -242,8 +252,8 @@ def get_dress_item(type, weather):
     valid = False
     random_choice = []
     try:
-        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
         cursordb = db.cursor()
         cursordb.execute(
             "SELECT ci.id, ci.picture, ci.user_id, ci.category, "
@@ -285,183 +295,7 @@ def get_dress_item(type, weather):
         print(f"An error occurred: {e}")
 
 
-# def get_top(type, weather, thickness, sleeves):
-#     """
-#        returns random clothing item that is of 'type'
-#         category  that is a top (shirt)
-#         and of requested weather, thickness and length
-#        :param type:
-#        :param weather:
-#        :return:
-#        """
-#     random_type = random.choice(type)
-#     random_weather = random.choice(weather)
-#     random_thickness = random.choice(thickness)
-#     random_sleeves = random.choice(sleeves)
-#
-#     try:
-#         # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-#         db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
-#                                      port=3307)
-#         cursordb = db.cursor()
-#         cursordb.execute(
-#             "SELECT ci.id, ci.picture, ci.user_id, ci.category "
-#             "FROM clothing_item ci "
-#             "JOIN categories c ON ci.category = c.id "
-#             "JOIN tags_clothing_item tci_weather ON tci_weather.clothing_item_id = ci.id "
-#             "JOIN tags_clothing_item tci_sleeves ON tci_sleeves.clothing_item_id = ci.id "
-#             "JOIN tags_clothing_item tci_thickness ON tci_thickness.clothing_item_id = ci.id "
-#             "JOIN tags t_weather ON t_weather.id = tci_weather.tag_id "
-#             "JOIN tags t_sleeves ON t_sleeves.id = tci_sleeves.tag_id "
-#             "JOIN tags t_thickness ON t_thickness.id = tci_thickness.tag_id "
-#             "WHERE c.type = %s "
-#             "AND t_weather.tag_name = 'weather' AND tci_weather.tag_value = %s "
-#             "AND t_sleeves.tag_name = 'sleeves' AND tci_sleeves.tag_value = %s "
-#             "AND t_thickness.tag_name = 'thickness' AND tci_thickness.tag_value = %s;",
-#             [random_type, random_weather, random_sleeves, random_thickness]
-#         )
-#         data = cursordb.fetchall()
-#         cursordb.close()
-#         db.close()
-#         if data == []:
-#             return data
-#         random_choice = random.choice(data)
-#         return random_choice
-#     except Exception as e:
-#         print(f"An error occurred: {e}")
-#
-#
-# def get_bottom(type, weather, thickness, length):
-#     """
-#     returns random clothing item that is of 'type'
-#      category  that is a bottom (pants or skirt)
-#      and of requested weather, thickness and length
-#     :param type:
-#     :param weather:
-#     :return:
-#     """
-#     random_type = random.choice(type)
-#     random_weather = random.choice(weather)
-#     random_thickness = random.choice(thickness)
-#     random_length = random.choice(length)
-#     try:
-#         # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-#         db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
-#                                      port=3307)
-#         cursordb = db.cursor()
-#
-#         # get all clothing items that are classified as summer.
-#         cursordb.execute(
-#             "SELECT ci.id, ci.picture, ci.user_id, ci.category "
-#             "FROM clothing_item ci "
-#             "JOIN categories c ON ci.category = c.id "
-#             "JOIN tags_clothing_item tci_weather ON tci_weather.clothing_item_id = ci.id "
-#             "JOIN tags_clothing_item tci_length ON tci_length.clothing_item_id = ci.id "
-#             "JOIN tags_clothing_item tci_thickness ON tci_thickness.clothing_item_id = ci.id "
-#             "JOIN tags t_weather ON t_weather.id = tci_weather.tag_id "
-#             "JOIN tags t_length ON t_length.id = tci_length.tag_id "
-#             "JOIN tags t_thickness ON t_thickness.id = tci_thickness.tag_id "
-#             "WHERE c.type = %s "
-#             "AND t_weather.tag_name = 'weather' AND tci_weather.tag_value = %s "
-#             "AND t_length.tag_name = 'length' AND tci_length.tag_value = %s "
-#             "AND t_thickness.tag_name = 'thickness' AND tci_thickness.tag_value = %s;"
-#             , [random_type, random_weather, random_length, random_thickness])
-#         data = cursordb.fetchall()
-#         cursordb.close()
-#         db.close()
-#         if data == []:
-#             return data
-#         random_choice = random.choice(data)
-#         return random_choice
-#     except Exception as e:
-#         print(f"An error occurred: {e}")
-#
-#
-# def get_dress(type, weather, thickness, sleeves, length):
-#     """
-#     returns random clothing item that is of 'type'
-#      category  that is a dress
-#      and of requested weather, thickness sleeves and length
-#     :param type:
-#     :param weather:
-#     :return:
-#     """
-#     random_type = random.choice(type)
-#     random_weather = random.choice(weather)
-#     random_thickness = random.choice(thickness)
-#     random_sleeves = random.choice(sleeves)
-#     random_length = random.choice(length)
-#     try:
-#         # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-#         db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
-#                                      port=3307)
-#         cursordb = db.cursor()
-#
-#         # get all clothing items that are classified as summer.
-#         cursordb.execute(
-#             "SELECT ci.id, ci.picture, ci.user_id, ci.category "
-#             "FROM clothing_item ci "
-#             "JOIN categories c ON ci.category = c.id "
-#             "JOIN tags_clothing_item tci_weather ON tci_weather.clothing_item_id = ci.id "
-#             "JOIN tags_clothing_item tci_sleeves ON tci_sleeves.clothing_item_id = ci.id "
-#             "JOIN tags_clothing_item tci_length ON tci_length.clothing_item_id = ci.id "
-#             "JOIN tags_clothing_item tci_thickness ON tci_thickness.clothing_item_id = ci.id "
-#             "JOIN tags t_weather ON t_weather.id = tci_weather.tag_id "
-#             "JOIN tags t_sleeves ON t_sleeves.id = tci_sleeves.tag_id "
-#             "JOIN tags t_length ON t_length.id = tci_length.tag_id "
-#             "JOIN tags t_thickness ON t_thickness.id = tci_thickness.tag_id "
-#             "WHERE c.type = %s "
-#             "AND t_weather.tag_name = 'weather' AND tci_weather.tag_value = %s "
-#             "AND t_length.tag_name = 'length' AND tci_length.tag_value = %s "
-#             "AND t_sleeves.tag_name = 'sleeves' AND tci_sleeves.tag_value = %s "
-#             "AND t_thickness.tag_name = 'thickness' AND tci_thickness.tag_value = %s;"
-#             , [random_type, random_weather, random_length, random_sleeves, random_thickness])
-#         data = cursordb.fetchall()
-#         cursordb.close()
-#         db.close()
-#         if data == []:
-#             return data
-#         random_choice = random.choice(data)
-#         return random_choice
-#     except Exception as e:
-#         print(f"An error occurred: {e}")
-
-# def get_random_item(type, weather):
-#     """
-#     returns random clothing item that is of 'type'
-#      category and of requested weather
-#     :param type:
-#     :param weather:
-#     :return:
-#     """
-#     random_type = random.choice(type)
-#     random_weather = random.choice(weather)
-#     try:
-#         # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-#         db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
-#                                      port=3307)
-#         cursordb = db.cursor()
-#
-#         # get all clothing items that are classified as summer.
-#         cursordb.execute(
-#             "SELECT ci.id, ci.picture, ci.user_id, ci.category "
-#             "FROM clothing_item ci JOIN categories c ON ci.category = c.id "
-#             "JOIN tags_clothing_item tci ON tci.clothing_item_id = ci.id "
-#             "JOIN tags t ON t.id = tci.tag_id WHERE c.type= %s"
-#             "AND t.tag_name = 'weather'"
-#             "AND tci.tag_value = %s", [random_type, random_weather])
-#         data = cursordb.fetchall()
-#         cursordb.close()
-#         db.close()
-#         if data == []:
-#             return data
-#         random_choice = random.choice(data)
-#         return random_choice
-#     except Exception as e:
-#         print(f"An error occurred: {e}")
-
-
-def add_outfit(user_id, top, bottom, outwear, shoes):
+def add_outfit(user_id, top, bottom, outwear, shoes, temperature):
     """
     add outfit to db
     """
@@ -469,12 +303,12 @@ def add_outfit(user_id, top, bottom, outwear, shoes):
     date_string = date.strftime("%Y-%m-%d")
     try:
 
-        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
 
         cursordb = db.cursor()
-        sql = "INSERT INTO outfits (top, bottom, outwear, shoes, last_used, user_id) VALUES (%s, %s, %s, %s, %s, %s)"
-        val = (top, bottom, outwear, shoes, date_string, user_id)
+        sql = "INSERT INTO outfits (top, bottom, outwear, shoes, last_used, user_id, temperature) VALUES (%s, %s, %s, %s, %s, %s)"
+        val = (top, bottom, outwear, shoes, date_string, user_id, temperature)
         cursordb.execute(sql, val)
         db.commit()
         cursordb.close()
@@ -489,8 +323,8 @@ def get_outfit_by_id(id):
     :return: all outfit info
     """
     try:
-        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
 
         cursordb = db.cursor()
 
@@ -507,8 +341,8 @@ def get_outfit_by_id(id):
 
 def check_outfit(user_id, top, bottom, shoes):
     try:
-        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
 
         cursordb = db.cursor()
 
@@ -530,8 +364,8 @@ def get_jacket(thickness):
      returns jacket based on weather and top chosen
      """
     try:
-        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+       # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
 
         cursordb = db.cursor()
         cursordb.execute(
@@ -594,7 +428,7 @@ def get_outwear(top, weather):
         return get_jacket('heavy')
 
 
-def get_outfit_by_weather(user_id, weather):
+def get_outfit_by_weather(user_id, weather, temperature):
     """
     :return: outfit id
     """
@@ -624,7 +458,7 @@ def get_outfit_by_weather(user_id, weather):
         outwear = get_outwear(top, weather)
         check = check_outfit(user_id, top[0], bottom[0], shoes[0])
         if check == []:
-            add_outfit(user_id, top[0], bottom[0], outwear[0], shoes[0])
+            add_outfit(user_id, top[0], bottom[0], outwear[0], shoes[0], temperature)
             check = check_outfit(user_id, top[0], bottom[0], shoes[0])
             return check[0][1]
 
@@ -636,8 +470,8 @@ def get_outfit_by_weather(user_id, weather):
 
 def is_type_sleeves(top_id, sleeve_type):
     try:
-        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
 
         cursordb = db.cursor()
 
@@ -660,8 +494,8 @@ def is_type_sleeves(top_id, sleeve_type):
 
 def is_type_weather(clothing_id, weather_type):
     try:
-        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
 
         cursordb = db.cursor()
 
@@ -681,118 +515,6 @@ def is_type_weather(clothing_id, weather_type):
     except Exception as e:
         print(f"An error occurred: {e}")
 
-
-# def cool_outfit(json_obj, user_id):
-#     """
-#     either summer outfit with long sleeves- or short sleeves and a jacket
-#     :return: outfit id
-#     """
-#     date = datetime.now().date()
-#     again = 1
-#     while again == 1:
-#         top = []
-#         bottom = []
-#         while top == [] or bottom == []:
-#             clothing_type = chooseOutfitType(json_obj)
-#             if clothing_type != "dress":
-#                 top = get_top(["shirts"], ["hot", "warm"], ["light", "medium"], ["short sleeves"])
-#                 bottom = get_bottom([clothing_type], ["hot", "warm"], ["light", "medium"], ["knee length", "long"])
-#
-#             else:
-#                 top = get_dress([clothing_type], ["hot", "warm"], ["light", "medium"], ["short sleeves", "long"], ["knee length", "long"])
-#                 bottom = [None]
-#         shoes = get_random_item("Footwear", ["hot", "warm"])
-#         if is_type_sleeves(top[0], "short sleeves"):
-#             outwear = get_random_item("outwear", "warm")
-#             if outwear == []:
-#                 outwear = [None]
-#         else:
-#             outwear = [None]
-#         check = checkOutfit(user_id, top[0], bottom[0], shoes[0])
-#         if check == []:
-#             add_outfit(user_id, top[0], bottom[0], outwear[0], shoes[0])
-#             check = checkOutfit(user_id, top[0], bottom[0], shoes[0])
-#             return check[0][1]
-#
-#         elif (check[0][0] - date).days < wear_again_range:
-#             again = 1
-#         else:
-#             return check[1]
-#
-#
-# def colder_outfit(json_obj, user_id):
-#     """
-#        either cool weather with long sleeves or  for warm weather with a jacket
-#        :return: outfit id
-#        """
-#     date = datetime.now().date()
-#     again = 1
-#     while again == 1:
-#         top = []
-#         bottom = []
-#         while top == [] or bottom == []:
-#             clothing_type = chooseOutfitType(json_obj)
-#             if clothing_type != "dress":
-#                 top = get_top(["shirts"], ["warm", "cool"], ["medium", "heavy"], ["long sleeves"])
-#                 bottom = get_bottom([clothing_type], ["warm", "cool"], ["medium", "heavy"], ["long"])
-#
-#             else:
-#                 top = get_dress([clothing_type], ["warm", "cool"], ["medium", "heavy"], ["long sleeves"],
-#                                 ["long"])
-#                 bottom = [None]
-#         shoes = get_random_item(["Footwear"], ["warm", "cool"])
-#         if is_type_weather(top[0], "warm"):
-#             outwear = get_random_item(["outwear"], ["cool"])
-#             if outwear == []:
-#                 outwear = [None]
-#         else:
-#             outwear = [None]
-#         check = checkOutfit(user_id, top[0], bottom[0], shoes[0])
-#         if check == []:
-#             add_outfit(user_id, top[0], bottom[0], outwear[0], shoes[0])
-#             check = checkOutfit(user_id, top[0], bottom[0], shoes[0])
-#             return check[0][1]
-#
-#         elif (check[0][0] - date).days < wear_again_range:
-#             again = 1
-#         else:
-#             return check[1]
-#
-#
-# # todo:
-# def winter_outfit(json_obj, user_id):
-#     """
-#        get cold weather outfit and coat
-#        :return: outfit id
-#        """
-#     date = datetime.now().date()
-#     again = 1
-#     while again == 1:
-#         top = []
-#         bottom = []
-#         while top == [] or bottom == []:
-#             clothing_type = chooseOutfitType(json_obj)
-#             if clothing_type != "dress":
-#                 top = get_top(["shirts"], ["cold"], ["heavy"], ["long sleeves"])
-#                 bottom = get_bottom([clothing_type], ["cold"], ["heavy"], ["long"])
-#
-#             else:
-#                 top = get_dress([clothing_type], ["cold"], ["heavy"], ["long sleeves"], ["long"])
-#                 bottom = [None]
-#         shoes = get_random_item(["Footwear"], ["cold"])
-#         outwear = get_random_item(["outwear"], ["cold"])
-#         check = checkOutfit(user_id, top[0], bottom[0], shoes[0])
-#         if check == []:
-#             add_outfit(user_id, top[0], bottom[0], outwear[0], shoes[0])
-#             check = checkOutfit(user_id, top[0], bottom[0], shoes[0])
-#             return check[0][1]
-#
-#         elif (check[0][0] - date).days < wear_again_range:
-#             again = 1
-#         else:
-#             return check[1]
-
-
 # todo:
 def getOutfit(json_obj, user_id):
     """
@@ -805,14 +527,14 @@ def getOutfit(json_obj, user_id):
     warm_threshold = int(user_thresholds[0][1])
     cool_threshold = int(user_thresholds[0][2])
     if temperature >= hot_threshold:
-        outfit_id = get_outfit_by_weather(user_id, 'hot')
+        outfit_id = get_outfit_by_weather(user_id, 'hot', temperature)
 
     elif warm_threshold <= temperature <= hot_threshold:
-        outfit_id = get_outfit_by_weather(user_id, 'warm')
+        outfit_id = get_outfit_by_weather(user_id, 'warm', temperature)
     elif warm_threshold <= temperature <= cool_threshold:
-        outfit_id = get_outfit_by_weather(user_id, 'cool')
+        outfit_id = get_outfit_by_weather(user_id, 'cool', temperature)
     else:
-        outfit_id = get_outfit_by_weather(user_id, 'cold')
+        outfit_id = get_outfit_by_weather(user_id, 'cold', temperature)
     return get_outfit_by_id(outfit_id)
 
 
@@ -822,8 +544,8 @@ def change_threshold(threshold_to_change, val, user_id):
     # WHERE user_id = <your_user_id>;
     try:
 
-        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
 
         cursordb = db.cursor()
         sql = "UPDATE user SET %s = %s WHERE user_id = %s"
@@ -847,7 +569,7 @@ def too_hot(hot_threshold, warm_threshold, cool_threshold, temperature, user_id)
         change_threshold("cool_threshold", cool_threshold - 2, user_id)
 
 
-def too_cold(hot_threshold, warm_threshold, cool_threshold, user_id):
+def too_cold(hot_threshold, warm_threshold, cool_threshold, temperature, user_id):
     if temperature >= hot_threshold:
         change_threshold("hot_threshold", hot_threshold + 2, user_id)
     elif warm_threshold <= temperature < hot_threshold:
@@ -857,10 +579,31 @@ def too_cold(hot_threshold, warm_threshold, cool_threshold, user_id):
     elif temperature < cool_threshold:
         pass
 
+def get_outfit_temperature(outfit_id):
+    try:
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
+                                     port=3307)
 
-def change_temp_thresholds(json_obj, user_id, stars, feedback):
-    temperature = getWeather(json_obj)
-    hot_threshold, warm_threshold, cool_threshold = get_users_thresholds(user_id)
+        cursordb = db.cursor()
+
+        # get all clothing items that are classified as summer.
+        cursordb.execute("SELECT temperature "
+                         "FROM outfits WHERE id = %s;"
+                         , (outfit_id))
+        data = cursordb.fetchall()
+        cursordb.close()
+        db.close()
+        return data[0]
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+def change_temp_thresholds(user_id, outfit_id,  stars, feedback):
+    temperature = get_outfit_temperature(outfit_id)
+    user_thresholds = get_users_thresholds(user_id)
+    hot_threshold = int(user_thresholds[0][0])
+    warm_threshold = int(user_thresholds[0][1])
+    cool_threshold = int(user_thresholds[0][2])
     if feedback == "too hot":
         too_hot(hot_threshold, warm_threshold, cool_threshold,temperature, user_id)
     elif feedback == "too cold":
@@ -877,8 +620,8 @@ def temperature(latitude, longitude):
 def delete_outfit(outfit_id):
     try:
 
-        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
 
         cursordb = db.cursor()
         sql = "DELETE FROM outfits WHERE id = %s;"
@@ -895,21 +638,4 @@ def regenerate(json_obj, user_id, outfit_id):
     delete_outfit(outfit_id)
     return getOutfit(json_obj, user_id)
 
-# def temperature():
-#     longitude = "34"
-#     latitude = "32"
-#     r = requests.get(
-#         'https://api.openweathermap.org/data/2.5/weather?lat=' + latitude + '.34&lon=' + longitude + '.99&appid=8f3241a0140c7cbf04fd85bcb7b1cef9')
-#     json_obj = r.json()
-#     # generate outfit
-#     outfit = getOutfit(json_obj, 1)
-#     print(outfit)
-#     temp_k = float(json_obj['main']['temp'])
-#     temp_c = temp_k - 273.15  # convert to celsius
-#     return temp_c
-#
-#
-# if __name__ == '__main__':
-#     temperature()
-#     #print(get_outfit_by_id(26))
 

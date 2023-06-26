@@ -22,8 +22,8 @@ def insert_new_user(username, password, email):
     :return: the users id
     """
     try:
-        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
+        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursor = db.cursor()
         sql = "INSERT INTO user (userName, password, email, hot, warm, cool) VALUES (%s, %s, %s,%s, %s, %s)"
         val = (username, password, email, warm_threshold, cool_threshold, cold_threshold )
@@ -47,8 +47,8 @@ def get_user_id(password, email):
     :return: user id
     """
     try:
-        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
+        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursordb = db.cursor()
         cursordb.execute(
             "SELECT id,username FROM user WHERE  password = %s And email = %s",
@@ -70,8 +70,8 @@ def insert_new_item(data, user_id):
     :param data: dict with all info about new item
     """
     try:
-        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
+        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursor = db.cursor()
         # get general attributes of item (assuming data is a json and first things are as follows:
 
@@ -100,8 +100,8 @@ def insert_new_item(data, user_id):
 
 def add_item_tags(data, item_id):
     try:
-        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
+        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursor = db.cursor()
 
         for x in data.keys():
@@ -126,8 +126,8 @@ def add_item_tags(data, item_id):
 
 def get_item_id(pic, user_id, category_id):
     try:
-        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
+        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursor = db.cursor()
         cursor.execute(
             "SELECT id FROM clothing_item WHERE picture = %s AND user_id = %s AND category = %s",
@@ -149,8 +149,8 @@ def get_item_pic(item_id):
     :return:
     """
     try:
-        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
+        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursordb = db.cursor()
         cursordb.execute(
             "SELECT pic FROM clothing_item WHERE  item_id = %s",
@@ -167,8 +167,8 @@ def get_item_pic(item_id):
 
 def get_category_id(category):
     try:
-        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
+        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursordb = db.cursor()
         cursordb.execute("SELECT id FROM categories WHERE type = %s", (category,))
         # Fetch the result
@@ -189,8 +189,8 @@ def get_closet(user_id, category):
     :return:
     """
     try:
-        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
+        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursordb = db.cursor()
         category_id = get_category_id(category)
         cursordb.execute(
@@ -211,8 +211,8 @@ def get_item_by_id(item_id):
     :return:
     """
     try:
-        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
+       # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursordb = db.cursor()
         cursordb.execute(
             "    SELECT * FROM clothing_item WHERE id = %s",(item_id,))
@@ -227,8 +227,8 @@ def get_item_by_id(item_id):
 
 def get_item_property(item_id):
     try:
-        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
+        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursordb = db.cursor()
         cursordb.execute(
             "SELECT tc.tag_name, tci.tag_value FROM tags_clothing_item tci JOIN tags tc ON tci.tag_id = tc.id where tci.clothing_item_id=%s;",(item_id,))
@@ -248,8 +248,8 @@ def generate(json_obj):
 
 def delete_item(item_id):
     try:
-        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
+       # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursordb = db.cursor()
         # Delete from tags_clothing_item table
         cursordb.execute("DELETE FROM smartwardrobe.tags_clothing_item WHERE clothing_item_id = %s;", (item_id,))

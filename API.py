@@ -3,6 +3,7 @@ import json
 from flask import Flask, jsonify, request, render_template
 import requests
 import functions
+import generate
 from generate import temperature, getOutfit, regenerate
 
 app = Flask(__name__)
@@ -172,7 +173,7 @@ def rateOutfit():
     rating = request.args.get('rating')
     option = request.args.get('option')
     print(userid)
-    functions.rate_outfit(userid, outfitid, rating, option)
+    generate.change_temp_thresholds(userid, outfitid, rating, option)
     return {'result': 'success'}
 
 
