@@ -3,7 +3,7 @@ import json
 from flask import Flask, jsonify, request, render_template
 import requests
 import functions
-from generate import temperature, getOutfit
+from generate import temperature, getOutfit, regenerate
 
 app = Flask(__name__)
 
@@ -126,6 +126,25 @@ def get_outfit():
     longitude = request.args.get('longitude')
     tempJson = temperature(latitude, longitude)
     outfit_info = getOutfit(tempJson, userid)
+    list1 = []
+    for i in range(1, 5):
+        if outfit_info[0][i] is not None:
+                item = functions.get_item_by_id(outfit_info[0][i])[0]
+                get_item_as_clist(item, list1)
+        # Return response as JSON
+    cList = clothingList(list1)
+    outfit = {"outfitId": outfit_info[0][0], "date": outfit_info[0][5], "list": list1, "userId": outfit_info[0][6]}
+    print(request.args)
+    return jsonify(outfit)
+@app.route('/regenerate')
+def regenerate_outfit():
+    # Get query parameters from request.args
+    userid = request.args.get('id')
+    latitude = request.args.get('latitude')
+    longitude = request.args.get('longitude')
+    outfitid = request.args.get('outfitid')
+    tempJson = temperature(latitude, longitude)
+    outfit_info = regenerate(tempJson, userid, outfitid)
     list1 = []
     for i in range(1, 5):
         if outfit_info[0][i] is not None:

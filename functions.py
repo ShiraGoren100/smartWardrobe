@@ -42,7 +42,6 @@ def insert_new_user(username, password, email):
 def get_user_id(password, email):
     """
     get user id based on all other parameters
-    :param username:
     :param password:
     :param email:
     :return: user id
@@ -212,8 +211,8 @@ def get_item_by_id(item_id):
     :return:
     """
     try:
-        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursordb = db.cursor()
         cursordb.execute(
             "    SELECT * FROM clothing_item WHERE id = %s",(item_id,))
@@ -228,8 +227,8 @@ def get_item_by_id(item_id):
 
 def get_item_property(item_id):
     try:
-        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursordb = db.cursor()
         cursordb.execute(
             "SELECT tc.tag_name, tci.tag_value FROM tags_clothing_item tci JOIN tags tc ON tci.tag_id = tc.id where tci.clothing_item_id=%s;",(item_id,))
