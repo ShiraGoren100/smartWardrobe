@@ -3,14 +3,13 @@ import random
 from datetime import datetime
 import requests
 
-
 wear_again_range = 2
 
 
 def get_users_thresholds(user_id):
     try:
-        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",    port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",    port=3307)
         cursordb = db.cursor()
         cursordb.execute("SELECT hot,warm,cool FROM user WHERE id = %s;", [user_id])
         data = cursordb.fetchall()
@@ -115,8 +114,8 @@ def get_shoes_item(type, weather):
     valid = False
     random_choice = []
     try:
-        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
         cursordb = db.cursor()
         cursordb.execute(
             "SELECT ci.id, ci.picture, ci.user_id, ci.category, "
@@ -157,8 +156,8 @@ def get_top_item(type, weather):
     valid = False
     random_choice = []
     try:
-        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursordb = db.cursor()
         cursordb.execute(
             "SELECT ci.id, ci.picture, ci.user_id, ci.category, "
@@ -205,8 +204,8 @@ def get_bottom_item(type, weather):
     valid = False
     random_choice = []
     try:
-        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
         cursordb = db.cursor()
         cursordb.execute(
             "SELECT ci.id, ci.picture, ci.user_id, ci.category, "
@@ -252,8 +251,8 @@ def get_dress_item(type, weather):
     valid = False
     random_choice = []
     try:
-        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
         cursordb = db.cursor()
         cursordb.execute(
             "SELECT ci.id, ci.picture, ci.user_id, ci.category, "
@@ -303,11 +302,11 @@ def add_outfit(user_id, top, bottom, outwear, shoes, temperature):
     date_string = date.strftime("%Y-%m-%d")
     try:
 
-        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
 
         cursordb = db.cursor()
-        sql = "INSERT INTO outfits (top, bottom, outwear, shoes, last_used, user_id, temperature) VALUES (%s, %s, %s, %s, %s, %s)"
+        sql = "INSERT INTO outfits (top, bottom, outwear, shoes, last_used, user_id, temperature) VALUES (%s, %s, %s, %s, %s, %s, %s)"
         val = (top, bottom, outwear, shoes, date_string, user_id, temperature)
         cursordb.execute(sql, val)
         db.commit()
@@ -323,8 +322,8 @@ def get_outfit_by_id(id):
     :return: all outfit info
     """
     try:
-        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
 
         cursordb = db.cursor()
 
@@ -341,8 +340,8 @@ def get_outfit_by_id(id):
 
 def check_outfit(user_id, top, bottom, shoes):
     try:
-        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
 
         cursordb = db.cursor()
 
@@ -364,8 +363,8 @@ def get_jacket(thickness):
      returns jacket based on weather and top chosen
      """
     try:
-       # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
 
         cursordb = db.cursor()
         cursordb.execute(
@@ -398,8 +397,9 @@ def get_jacket(thickness):
             return [None]
         random_choice = random.choice(data)
         return random_choice
+
     except Exception as e:
-        print(f"An error occurred: {e}")
+      print(f"An error occurred: {e}")
 
 
 def get_outwear(top, weather):
@@ -444,7 +444,7 @@ def get_outfit_by_weather(user_id, weather, temperature):
             if clothing_type != "Dresses":
                 top = get_top_item("shirts", weather)
                 bottom = get_bottom_item(clothing_type, weather)
-                if bottom == [] or top== []:
+                if bottom == [] or top == []:
                     options.remove(clothing_type)
             else:
                 top = get_dress_item(clothing_type, weather)
@@ -470,8 +470,8 @@ def get_outfit_by_weather(user_id, weather, temperature):
 
 def is_type_sleeves(top_id, sleeve_type):
     try:
-        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
 
         cursordb = db.cursor()
 
@@ -494,8 +494,8 @@ def is_type_sleeves(top_id, sleeve_type):
 
 def is_type_weather(clothing_id, weather_type):
     try:
-        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
 
         cursordb = db.cursor()
 
@@ -515,13 +515,14 @@ def is_type_weather(clothing_id, weather_type):
     except Exception as e:
         print(f"An error occurred: {e}")
 
+
 # todo:
 def getOutfit(json_obj, user_id):
     """
     gets weather and decides what kind of outfit to generate
     :return: list with a tuple holding all info of outfit
     """
-    temperature = getWeather(json_obj)
+    temperature = int(getWeather(json_obj))
     user_thresholds = get_users_thresholds(user_id)
     hot_threshold = int(user_thresholds[0][0])
     warm_threshold = int(user_thresholds[0][1])
@@ -544,12 +545,17 @@ def change_threshold(threshold_to_change, val, user_id):
     # WHERE user_id = <your_user_id>;
     try:
 
-        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
 
         cursordb = db.cursor()
-        sql = "UPDATE user SET %s = %s WHERE user_id = %s"
-        val = (threshold_to_change, val, user_id)
+        if threshold_to_change == 'hot':
+            sql = "UPDATE user SET hot = %s WHERE id = %s"
+        elif threshold_to_change == 'warm':
+            sql = "UPDATE user SET warm = %s WHERE id = %s"
+        else:
+            sql = "UPDATE user SET cool = %s WHERE id = %s"
+        val = (val, user_id)
         cursordb.execute(sql, val)
         db.commit()
         cursordb.close()
@@ -562,35 +568,36 @@ def too_hot(hot_threshold, warm_threshold, cool_threshold, temperature, user_id)
     if temperature >= hot_threshold:
         pass
     elif warm_threshold <= temperature < hot_threshold:
-        change_threshold("hot_threshold", hot_threshold - 2, user_id)
+        change_threshold('hot', hot_threshold - 2, user_id)
     elif cool_threshold <= temperature < warm_threshold:
-        change_threshold("warm_threshold", warm_threshold - 2, user_id)
+        change_threshold('warm', warm_threshold - 2, user_id)
     elif temperature < cool_threshold:
-        change_threshold("cool_threshold", cool_threshold - 2, user_id)
+        change_threshold('cool', cool_threshold - 2, user_id)
 
 
 def too_cold(hot_threshold, warm_threshold, cool_threshold, temperature, user_id):
+
     if temperature >= hot_threshold:
-        change_threshold("hot_threshold", hot_threshold + 2, user_id)
+        change_threshold('hot', hot_threshold + 2, user_id)
     elif warm_threshold <= temperature < hot_threshold:
-        change_threshold("warm_threshold", warm_threshold + 2, user_id)
+        change_threshold('warm', warm_threshold + 2, user_id)
     elif cool_threshold <= temperature < warm_threshold:
-        change_threshold("cool_threshold", cool_threshold + 2, user_id)
+        change_threshold('cool', cool_threshold + 2, user_id)
     elif temperature < cool_threshold:
         pass
 
+
 def get_outfit_temperature(outfit_id):
     try:
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
-                                     port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
 
         cursordb = db.cursor()
 
         # get all clothing items that are classified as summer.
         cursordb.execute("SELECT temperature "
                          "FROM outfits WHERE id = %s;"
-                         , (outfit_id))
+                         , (outfit_id,))
         data = cursordb.fetchall()
         cursordb.close()
         db.close()
@@ -598,16 +605,18 @@ def get_outfit_temperature(outfit_id):
     except Exception as e:
         print(f"An error occurred: {e}")
 
-def change_temp_thresholds(user_id, outfit_id,  stars, feedback):
-    temperature = get_outfit_temperature(outfit_id)
+
+def change_temp_thresholds(user_id, outfit_id, feedback):
+    temperature = get_outfit_temperature(outfit_id)[0]
     user_thresholds = get_users_thresholds(user_id)
     hot_threshold = int(user_thresholds[0][0])
     warm_threshold = int(user_thresholds[0][1])
     cool_threshold = int(user_thresholds[0][2])
     if feedback == "too hot":
-        too_hot(hot_threshold, warm_threshold, cool_threshold,temperature, user_id)
+        too_hot(hot_threshold, warm_threshold, cool_threshold, temperature, user_id)
     elif feedback == "too cold":
         too_cold(hot_threshold, warm_threshold, cool_threshold, temperature, user_id)
+
 
 def temperature(latitude, longitude):
     longitude1 = str(int(round(float(longitude))))
@@ -620,8 +629,8 @@ def temperature(latitude, longitude):
 def delete_outfit(outfit_id):
     try:
 
-        #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
 
         cursordb = db.cursor()
         sql = "DELETE FROM outfits WHERE id = %s;"
@@ -637,5 +646,3 @@ def delete_outfit(outfit_id):
 def regenerate(json_obj, user_id, outfit_id):
     delete_outfit(outfit_id)
     return getOutfit(json_obj, user_id)
-
-

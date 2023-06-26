@@ -134,7 +134,7 @@ def get_outfit():
                 get_item_as_clist(item, list1)
         # Return response as JSON
     cList = clothingList(list1)
-    outfit = {"outfitId": outfit_info[0][0], "date": outfit_info[0][5], "list": list1, "userId": outfit_info[0][6]}
+    outfit = {"outfitId": outfit_info[0][0], "date": outfit_info[0][5].strftime("%d/%m/%y"), "list": list1, "userId": outfit_info[0][6]}
     print(request.args)
     return jsonify(outfit)
 @app.route('/regenerate')
@@ -153,7 +153,7 @@ def regenerate_outfit():
                 get_item_as_clist(item, list1)
         # Return response as JSON
     cList = clothingList(list1)
-    outfit = {"outfitId": outfit_info[0][0], "date": outfit_info[0][5], "list": list1, "userId": outfit_info[0][6]}
+    outfit = {"outfitId": outfit_info[0][0], "date": outfit_info[0][5].strftime("%d/%m/%y"), "list": list1, "userId": outfit_info[0][6]}
     print(request.args)
     return jsonify(outfit)
 
@@ -170,10 +170,9 @@ def rateOutfit():
     # todo:add rating to outfit
     userid = request.args.get('id')
     outfitid = request.args.get('outfitID')
-    rating = request.args.get('rating')
     option = request.args.get('option')
     print(userid)
-    generate.change_temp_thresholds(userid, outfitid, rating, option)
+    generate.change_temp_thresholds(userid, outfitid,  option)
     return {'result': 'success'}
 
 
