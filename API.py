@@ -14,9 +14,10 @@ class LoggedInUser:
     user object
     """
 
-    def __init__(self, userId, displayName):
+    def __init__(self, userId, displayName, days_interval):
         self.userId = userId
         self.displayName = displayName
+        self.days_interval = days_interval
 
 
 class clothingList:
@@ -64,8 +65,8 @@ def register():
     email = request.json.get('email')
     password = request.json.get('password')
     username = request.json.get('username')
-    uid, uname = functions.insert_new_user(username, password, email)
-    user = LoggedInUser(uid, uname)
+    uid, uname, days_interval = functions.insert_new_user(username, password, email)
+    user = LoggedInUser(uid, uname, days_interval)
     return jsonify(user.__dict__)
 
 
@@ -73,8 +74,8 @@ def register():
 def login():
     email = request.json.get('email')
     password = request.json.get('password')
-    uid, uname = functions.get_user_id(password, email)
-    user = LoggedInUser(uid, uname)
+    uid, uname, days_interval = functions.get_user_id(password, email)
+    user = LoggedInUser(uid, uname, days_interval)
     return jsonify(user.__dict__)
 
 
@@ -127,6 +128,11 @@ def get_outfit():
     longitude = request.args.get('longitude')
     tempJson = temperature(latitude, longitude)
     outfit_info = getOutfit(tempJson, userid)
+    if outfit_info == "not enough items for outfit interval":
+        error_response = {"error": outfit_info}
+        json_response = json.dumps(error_response)
+        return json_response, 500
+
     list1 = []
     for i in range(1, 5):
         if outfit_info[0][i] is not None:
@@ -146,6 +152,10 @@ def regenerate_outfit():
     outfitid = request.args.get('outfitid')
     tempJson = temperature(latitude, longitude)
     outfit_info = regenerate(tempJson, userid, outfitid)
+    if outfit_info == "not enough items for outfit interval":
+        error_response = {"error": outfit_info}
+        json_response = json.dumps(error_response)
+        return json_response, 500
     list1 = []
     for i in range(1, 5):
         if outfit_info[0][i] is not None:
