@@ -1,10 +1,10 @@
 import json
-
 from flask import Flask, jsonify, request, render_template
-import requests
-import functions
+import closet
+import user_file
 import generate
-from generate import temperature, getOutfit, regenerate
+from generate import  regenerate
+from weather_file import temperature
 
 app = Flask(__name__)
 
@@ -65,7 +65,7 @@ def register():
     email = request.json.get('email')
     password = request.json.get('password')
     username = request.json.get('username')
-    uid, uname, days_interval = functions.insert_new_user(username, password, email)
+    uid, uname, days_interval = user_file.insert_new_user(username, password, email)
     user = LoggedInUser(uid, uname, days_interval)
     return jsonify(user.__dict__)
 
@@ -74,7 +74,7 @@ def register():
 def login():
     email = request.json.get('email')
     password = request.json.get('password')
-    uid, uname, days_interval = functions.get_user_id(password, email)
+    uid, uname, days_interval = user_file.get_user_id(password, email)
     user = LoggedInUser(uid, uname, days_interval)
     return jsonify(user.__dict__)
 
@@ -85,11 +85,11 @@ def addItem():
     userid = request.args.get('id')
     print(userid)
     print(data)
-    functions.insert_new_item(data, userid)
+    closet.insert_new_item(data, userid)
     return {'result': 'success'}
 
 def get_item_as_clist(i, list1):
-    properties = functions.get_item_property(i[0])
+    properties = closet.get_item_property(i[0])
     if properties is None:
         return
     title_value_list = []
@@ -109,7 +109,7 @@ def get_closet():
     category = request.args.get('category')
     print(userid + "," + category)
     # Perform operations using userid and category
-    data = functions.get_closet(userid, category)
+    data = get_closet(userid, category)
     list1 = []
     for i in data:
        get_item_as_clist(i, list1)
@@ -127,7 +127,7 @@ def get_outfit():
     latitude = request.args.get('latitude')
     longitude = request.args.get('longitude')
     tempJson = temperature(latitude, longitude)
-    outfit_info = getOutfit(tempJson, userid)
+    outfit_info = get_outfit(tempJson, userid)
     if outfit_info == "not enough items for outfit interval":
         error_response = {"error": outfit_info}
         json_response = json.dumps(error_response)
@@ -136,7 +136,7 @@ def get_outfit():
     list1 = []
     for i in range(1, 5):
         if outfit_info[0][i] is not None:
-                item = functions.get_item_by_id(outfit_info[0][i])[0]
+                item = closet.get_item_by_id(outfit_info[0][i])[0]
                 get_item_as_clist(item, list1)
         # Return response as JSON
     cList = clothingList(list1)
@@ -159,7 +159,7 @@ def regenerate_outfit():
     list1 = []
     for i in range(1, 5):
         if outfit_info[0][i] is not None:
-                item = functions.get_item_by_id(outfit_info[0][i])[0]
+                item = closet.get_item_by_id(outfit_info[0][i])[0]
                 get_item_as_clist(item, list1)
         # Return response as JSON
     cList = clothingList(list1)
@@ -171,7 +171,7 @@ def regenerate_outfit():
 @app.route('/deleteItem', methods=['DELETE'])
 def deleteItem():
     item_id = request.args.get('id')
-    functions.delete_item(item_id)
+    closet.delete_item(item_id)
     return {'result': 'success'}
 
 
