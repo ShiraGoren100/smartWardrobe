@@ -1,6 +1,7 @@
 import datetime
 import random
 import mysql.connector
+from datetime import datetime
 
 
 
@@ -150,8 +151,8 @@ def get_item_by_id(item_id):
     :return:
     """
     try:
-        # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
+        db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
         cursordb = db.cursor()
         cursordb.execute(
             "    SELECT * FROM clothing_item WHERE id = %s", (item_id,))

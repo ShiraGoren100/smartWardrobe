@@ -2,6 +2,7 @@ import json
 from flask import Flask, jsonify, request
 import user_file
 import generate
+import rating
 from closet import insert_new_item, get_item_property, get_item_by_id, delete_item, get_items_from_closet
 from generate import regenerate
 from weather_file import temperature
@@ -127,7 +128,7 @@ def get_outfit():
     latitude = request.args.get('latitude')
     longitude = request.args.get('longitude')
     tempJson = temperature(latitude, longitude)
-    outfit_info = get_outfit(tempJson, userid)
+    outfit_info = generate.get_outfit(tempJson, userid)
     if outfit_info == "not enough items for outfit interval":
         error_response = {"error": outfit_info}
         json_response = json.dumps(error_response)
@@ -182,7 +183,7 @@ def rateOutfit():
     outfitid = request.args.get('outfitID')
     option = request.args.get('option')
     print(userid)
-    generate.change_temp_thresholds(userid, outfitid,  option)
+    rating.change_temp_thresholds(userid, outfitid,  option)
     return {'result': 'success'}
 
 @app.route('/interval', methods=['POST'])

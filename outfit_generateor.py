@@ -1,5 +1,6 @@
 from random import random
 import mysql
+import random
 
 from weather_file import shoes_fit_weather, check_if_fits_weather
 

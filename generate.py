@@ -35,7 +35,7 @@ def get_outfit_by_weather(user_id, weather, temperature):
         top = []
         bottom = []
         while top == [] or bottom == []:
-            clothing_type = chooseOutfitType(options)
+            clothing_type = choose_outfit_type(options)
             if clothing_type != "Dresses":
                 top = get_top_item("shirts", weather)
                 bottom = get_bottom_item(clothing_type, weather)
