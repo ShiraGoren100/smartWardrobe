@@ -1,7 +1,7 @@
 import random
 from datetime import datetime
-from closet import get_outfit_by_id, check_outfit, get_jacket, add_outfit, delete_outfit
-from outfit_generateor import get_top_item, get_bottom_item, get_dress_item, get_shoes_item
+from closet import get_outfit_by_id, check_outfit, add_outfit, delete_outfit
+from outfit_generateor import get_top_item, get_bottom_item, get_dress_item, get_shoes_item, get_jacket
 from user_file import get_users_thresholds, get_days_interval, change_threshold
 from weather_file import get_weather
 
@@ -37,20 +37,20 @@ def get_outfit_by_weather(user_id, weather, temperature):
         while top == [] or bottom == []:
             clothing_type = choose_outfit_type(options)
             if clothing_type != "Dresses":
-                top = get_top_item("shirts", weather)
-                bottom = get_bottom_item(clothing_type, weather)
+                top = get_top_item("shirts", weather, user_id)
+                bottom = get_bottom_item(clothing_type, weather, user_id)
                 if bottom == [] or top == []:
                     options.remove(clothing_type)
             else:
-                top = get_dress_item(clothing_type, weather)
+                top = get_dress_item(clothing_type, weather, user_id)
                 bottom = [None]
                 if top == [] or top == None:
                     options.remove(clothing_type)
                     top = []
-        shoes = get_shoes_item("Footwear", weather)
+        shoes = get_shoes_item("Footwear", weather, user_id)
         if shoes == []:
             shoes = [None]
-        outwear = get_outwear(top, weather)
+        outwear = get_outwear(top, weather, user_id)
         check = check_outfit(user_id, top[0], bottom[0], shoes[0])
         if check == []:
             add_outfit(user_id, top[0], bottom[0], outwear[0], shoes[0], temperature)
@@ -65,55 +65,6 @@ def get_outfit_by_weather(user_id, weather, temperature):
     return error_message
 
 
-# def is_type_sleeves(top_id, sleeve_type):
-#     try:
-#         #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-#         db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
-#
-#         cursordb = db.cursor()
-#
-#         cursordb.execute(
-#             "SELECT ci.id, ci.picture, ci.user_id, ci.category "
-#             "FROM clothing_item ci JOIN categories c ON ci.category = c.id "
-#             "JOIN tags_clothing_item tci ON tci.clothing_item_id = ci.id "
-#             "JOIN tags t ON t.id = tci.tag_id WHERE ci.id = %s"
-#             "AND t.tag_name ='sleeves'"
-#             "AND tci.tag_value = %s", [top_id, sleeve_type])
-#         data = cursordb.fetchall()
-#         cursordb.close()
-#         db.close()
-#         if data == []:
-#             return False
-#         return True
-#     except Exception as e:
-#         print(f"An error occurred: {e}")
-
-
-# def is_type_weather(clothing_id, weather_type):
-#     try:
-#         #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
-#         db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe", port=3307)
-#
-#         cursordb = db.cursor()
-#
-#         cursordb.execute(
-#             "SELECT ci.id, ci.picture, ci.user_id, ci.category "
-#             "FROM clothing_item ci JOIN categories c ON ci.category = c.id "
-#             "JOIN tags_clothing_item tci ON tci.clothing_item_id = ci.id "
-#             "JOIN tags t ON t.id = tci.tag_id WHERE ci.id = %s "
-#             "AND t.tag_name ='sleeves'"
-#             "AND tci.tag_value = %s", [clothing_id, weather_type])
-#         data = cursordb.fetchall()
-#         cursordb.close()
-#         db.close()
-#         if data == []:
-#             return False
-#         return True
-#     except Exception as e:
-#         print(f"An error occurred: {e}")
-
-
-# todo:
 def get_outfit(json_obj, user_id):
     """
     gets weather and decides what kind of outfit to generate
@@ -166,27 +117,25 @@ def regenerate(json_obj, user_id, outfit_id):
     return get_outfit(json_obj, user_id)
 
 
-def get_outwear(top, weather):
+def get_outwear(top, weather, user_id):
     """
     returns outwear for outfit
-    :param top:
-    :param weather:
-    :return:
+
     """
     if weather == 'hot':
         return [None]
     if weather == 'warm':
         if top[6] == 'light':
             # get a light jacket
-            return get_jacket('light')
+            return get_jacket('light', user_id)
         else:
             return [None]
     if weather == 'cool':
         if top[6] == 'light':
-            return get_jacket('heavy')
+            return get_jacket('heavy', user_id)
         if top[6] == 'medium':
-            return get_jacket('medium')
+            return get_jacket('medium', user_id)
         if top[6] == 'heavy':
             return [None]
     if weather == 'cold':
-        return get_jacket('heavy')
+        return get_jacket('heavy', user_id)
