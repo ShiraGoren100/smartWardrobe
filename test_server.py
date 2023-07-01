@@ -5,6 +5,7 @@ import closet
 import user_file
 
 
+#todo: change longitude and latitude to fit weathe rwe expect when running tests
 @pytest.fixture
 def client():
     app = API.app.test_client()
