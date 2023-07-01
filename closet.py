@@ -187,13 +187,21 @@ def delete_item(item_id):
         #db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
         db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",port=3307)
         cursordb = db.cursor()
+
+        # Delete from outfit table
+        cursordb.execute("DELETE FROM outfits WHERE top = %s "
+                         "OR bottom = %s OR outwear = %s OR shoes = %s;", (item_id, item_id, item_id, item_id))
+        db.commit()
+        print(cursordb.statement)
+
+
         # Delete from tags_clothing_item table
-        cursordb.execute("DELETE FROM smartwardrobe.tags_clothing_item WHERE clothing_item_id = %s;", (item_id,))
+        cursordb.execute("DELETE FROM tags_clothing_item WHERE clothing_item_id = %s;", (item_id,))
         db.commit()
         print(cursordb.statement)
 
         # Delete from clothing_item table
-        cursordb.execute("DELETE FROM smartwardrobe.clothing_item WHERE id = %s;", (item_id,))
+        cursordb.execute("DELETE FROM clothing_item WHERE id = %s;", (item_id,))
         db.commit()
         print(cursordb.statement)
 

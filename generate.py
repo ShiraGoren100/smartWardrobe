@@ -127,15 +127,15 @@ def get_outwear(top, weather, user_id):
     if weather == 'warm':
         if top[6] == 'light':
             # get a light jacket
-            return get_jacket('light', user_id)
+            return get_jacket('light', user_id, "Sweaters")
         else:
             return [None]
     if weather == 'cool':
         if top[6] == 'light':
-            return get_jacket('heavy', user_id)
+            return get_jacket('heavy', user_id, "Coats")
         if top[6] == 'medium':
-            return get_jacket('medium', user_id)
+            return get_jacket('medium', user_id, "Sweaters")
         if top[6] == 'heavy':
             return [None]
     if weather == 'cold':
-        return get_jacket('heavy', user_id)
+        return get_jacket('heavy', user_id, "Coats")

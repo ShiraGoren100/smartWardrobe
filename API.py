@@ -89,6 +89,7 @@ def addItem():
     insert_new_item(data, userid)
     return {'result': 'success'}
 
+
 def get_item_as_clist(i, list1):
     properties = get_item_property(i[0])
     if properties is None:
@@ -144,6 +145,8 @@ def get_outfit():
     outfit = {"outfitId": outfit_info[0][0], "date": outfit_info[0][5].strftime("%d/%m/%y"), "list": list1, "userId": outfit_info[0][6]}
     print(request.args)
     return jsonify(outfit)
+
+
 @app.route('/regenerate')
 def regenerate_outfit():
     # Get query parameters from request.args

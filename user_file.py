@@ -146,3 +146,43 @@ def change_threshold(threshold_to_change, val, user_id):
         db.close()
     except Exception as e:
         print(f"An error occurred: {e}")
+
+
+def remove_user(user_id):
+    try:
+        # db = mysql.connector.connect(host="localhost", user="root", passwd="root", database="SmartWardrobe")
+        db = mysql.connector.connect(host="localhost", user="root", passwd="TxEhuTkXhxnt1", database="SmartWardrobe",
+                                     port=3307)
+        cursordb = db.cursor()
+
+        # Delete from outfit table all users outfits
+        cursordb.execute("DELETE FROM outfits WHERE user_id = %s;", (user_id,))
+        db.commit()
+        print(cursordb.statement)
+        #get all items of user:
+        cursordb.execute(
+            "SELECT id FROM clothing_item WHERE user_id = %s;",
+            [user_id]
+        )
+        data = cursordb.fetchall()
+
+
+        #for each item in delete all the tags and the item itself
+        for item_id in data:
+            # Delete from tags_clothing_item table all items from user
+            cursordb.execute("DELETE FROM tags_clothing_item WHERE clothing_item_id = %s;", (item_id[0],))
+            db.commit()
+            print(cursordb.statement)
+
+            # Delete from clothing_item table
+            cursordb.execute("DELETE FROM clothing_item WHERE id = %s;", (item_id[0],))
+            db.commit()
+            print(cursordb.statement)
+
+        # delete user
+        cursordb.execute("DELETE FROM user WHERE id = %s", (user_id,))
+        db.commit()
+        cursordb.close()
+        db.close()
+    except Exception as e:
+        print(f"An error occurred: {e}")
