@@ -1,0 +1,60 @@
+CREATE DATABASE SmartWardrobe;
+
+USE SmartWardrobe;
+
+CREATE TABLE user (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  userName VARCHAR(50) NOT NULL,
+  password VARCHAR(50) NOT NULL,
+  email VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE categories (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  type VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE tags (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  tag_name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE clothing_item (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  picture MEDIUMTEXT NOT NULL,
+  user_id INT NOT NULL,
+  category INT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES user(id),
+  FOREIGN KEY (category) REFERENCES categories(id)
+);
+
+CREATE TABLE tags_clothing_item (
+  clothing_item_id INT NOT NULL,
+  tag_id INT NOT NULL,
+  FOREIGN KEY (clothing_item_id) REFERENCES clothing_item(id),
+  FOREIGN KEY (tag_id) REFERENCES tags(id),
+  PRIMARY KEY (clothing_item_id, tag_id)
+);
+
+CREATE TABLE outfits (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  top INT NOT NULL,
+  bottom INT NOT NULL,
+  outwear INT,
+  shoes INT NOT NULL,
+  accessories INT,
+  FOREIGN KEY (top) REFERENCES clothing_item(id),
+  FOREIGN KEY (bottom) REFERENCES clothing_item(id),
+  FOREIGN KEY (outwear) REFERENCES clothing_item(id),
+  FOREIGN KEY (shoes) REFERENCES clothing_item(id),
+  FOREIGN KEY (accessories) REFERENCES clothing_item(id)
+);
+
+CREATE TABLE history (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  outfit_id INT NOT NULL,
+  user_id INT NOT NULL,
+  date DATE NOT NULL,
+  FOREIGN KEY (outfit_id) REFERENCES outfits(id),
+  FOREIGN KEY (user_id) REFERENCES user(id)
+);
