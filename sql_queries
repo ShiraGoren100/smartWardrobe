@@ -1,0 +1,9 @@
+// for adding the categories and tags to the db
+
+
+INSERT INTO categories (type)
+VALUES ('Coats'), ('Sweaters'), ('Dresses'), ('Shirts'), ('Pants'), ('Skirts'), ('Footwear');
+INSERT INTO tags (tag_name)
+VALUES ('Sleeves'), ('Thickness'), ('Length'), ('Weather'),('Color');
+
+//change outfit table- add user_id and last_used columns, remove accessories column
